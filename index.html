@@ -9,15 +9,14 @@
             --bg: #0f172a; --bg2: #1e293b; --txt: #f8fafc; --txt2: #94a3b8;
             --accent: #6366f1; --side-w: 240px; --side-min: 70px;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
         body { height: 100dvh; background: var(--bg); color: var(--txt); display: flex; overflow: hidden; }
 
         /* BLOQUEIO */
         #lock { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         #pin-dots { font-size: 3rem; height: 60px; margin-bottom: 20px; color: var(--accent); letter-spacing: 10px; }
         .pin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .pin-btn { width: 75px; height: 75px; border-radius: 50%; background: var(--bg2); color: #fff; font-size: 1.5rem; border: none; cursor: pointer; transition: 0.2s; }
-        .pin-btn:active { background: var(--accent); transform: scale(0.9); }
+        .pin-btn { width: 75px; height: 75px; border-radius: 50%; background: var(--bg2); color: #fff; font-size: 1.5rem; border: none; cursor: pointer; }
 
         /* SIDEBAR */
         #sidebar {
@@ -26,30 +25,18 @@
             transition: width 0.3s ease; position: relative;
         }
         #sidebar.collapsed { width: var(--side-min); }
-        .side-header { height: 70px; display: flex; align-items: center; padding: 0 20px; color: var(--accent); font-weight: bold; font-size: 1.2rem; overflow: hidden; }
+        .side-header { height: 70px; display: flex; align-items: center; padding: 0 20px; color: var(--accent); font-weight: bold; }
         
         .side-item {
             width: 100%; height: 55px; border: none; background: none; color: var(--txt2);
-            display: flex; align-items: center; padding: 0 23px; cursor: pointer;
-            overflow: hidden; white-space: nowrap; transition: 0.2s;
+            display: flex; align-items: center; padding: 0 23px; cursor: pointer; overflow: hidden;
         }
-        .side-item:hover, .side-item.active { color: #fff; background: rgba(99,102,241,0.1); border-left: 4px solid var(--accent); }
-        .side-item svg { min-width: 24px; margin-right: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .side-item.active { color: #fff; background: rgba(99,102,241,0.1); border-left: 4px solid var(--accent); }
 
         /* MAIN */
         #main { flex: 1; display: none; flex-direction: column; overflow-y: auto; }
         #app-content { padding: 30px; max-width: 1000px; width: 100%; margin: 0 auto; }
-
-        .card { background: var(--bg2); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
-        .btn-toggle { position: absolute; bottom: 20px; left: 20px; background: none; border: none; color: var(--txt2); cursor: pointer; }
-        
-        @media (max-width: 600px) {
-            #sidebar { position: fixed; bottom: 0; width: 100%; height: 70px; flex-direction: row; border-top: 1px solid rgba(255,255,255,0.1); }
-            .side-item { flex-direction: column; font-size: 10px; height: 100%; justify-content: center; padding: 0; }
-            .side-item svg { margin-right: 0; margin-bottom: 4px; }
-            .side-header, .nav-label, .btn-toggle { display: none; }
-            #app-content { padding-bottom: 100px; }
-        }
+        .card { background: var(--bg2); padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
@@ -61,23 +48,9 @@
 
 <aside id="sidebar">
     <div class="side-header"><span>FINANÇAS PRO</span></div>
-    
-    <button class="side-item active" onclick="nav('home', this)">
-        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-        <span class="nav-label">Início</span>
-    </button>
-    
-    <button class="side-item" onclick="nav('transacoes', this)">
-        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        <span class="nav-label">Extrato</span>
-    </button>
-    
-    <button class="side-item" onclick="nav('perfil', this)">
-        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <span class="nav-label">Perfil</span>
-    </button>
-
-    <button class="btn-toggle" onclick="document.getElementById('sidebar').classList.toggle('collapsed')">☰</button>
+    <button class="side-item active" onclick="nav('home', this)">Dashboard</button>
+    <button class="side-item" onclick="nav('transacoes', this)">Extrato</button>
+    <button class="side-item" onclick="nav('perfil', this)">Configurações</button>
 </aside>
 
 <main id="main">

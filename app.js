@@ -1,20 +1,27 @@
-// --- CORE FINANÇAS v7.84 ---
-const K = k => 'fin6_' + k, gl = k => { try { const v = localStorage.getItem(K(k)); return v ? JSON.parse(v) : null } catch { return null } }, gs = (k, v) => localStorage.setItem(K(k), JSON.stringify(v));
+// --- DADOS FICTÍCIOS PARA TESTE ---
+const DADOS_EXEMPLO = {
+    cats: [
+        {id:'c1', nome:'Mercado', emoji:'🛒'},
+        {id:'c2', nome:'Salário', emoji:'💰'},
+        {id:'c3', nome:'Lazer', emoji:'🎬'}
+    ],
+    txs: [
+        {id:'t1', desc:'Supermercado Silva', valor: -250.50, data:'2024-05-01', catId:'c1'},
+        {id:'t2', desc:'Salário Mensal', valor: 5000.00, data:'2024-05-05', catId:'c2'},
+        {id:'t3', desc:'Cinema Shopping', valor: -60.00, data:'2024-05-06', catId:'c3'}
+    ]
+};
 
-let cfg = gl('cfg') || { shUrl: typeof APP_SCRIPT_URL !== 'undefined' ? APP_SCRIPT_URL : '', pin: '8888' };
-let cats = gl('cats') || [];
-let txs = gl('txs') || [];
+// --- LOGICA CORE ---
+const K = k => 'fin6_local_' + k;
+const gl = k => JSON.parse(localStorage.getItem(K(k)));
+const gs = (k, v) => localStorage.setItem(K(k), JSON.stringify(v));
+
+let cats = gl('cats') || DADOS_EXEMPLO.cats;
+let txs = gl('txs') || DADOS_EXEMPLO.txs;
 let pinInput = "";
 
-// --- CONTROLE SIDEBAR ---
-function toggleSidebar() {
-    const sb = document.getElementById('sidebar');
-    sb.classList.toggle('collapsed');
-    const labels = document.querySelectorAll('.label');
-    labels.forEach(l => l.style.display = sb.classList.contains('collapsed') ? 'none' : 'inline');
-}
-
-// --- PIN LOGIC ---
+// --- SISTEMA DE BLOQUEIO ---
 function init() {
     const kb = document.getElementById('keyboard');
     if (!kb) return;
@@ -22,7 +29,11 @@ function init() {
         const b = document.createElement('button');
         b.className = 'pin-btn';
         b.innerText = k;
-        b.onclick = () => k === 'C' ? (pinInput = "", document.getElementById('pin-dots').innerText = "") : pressPin(k);
+        b.onclick = () => {
+            if (k === 'C') { pinInput = ""; document.getElementById('pin-dots').innerText = ""; }
+            else if (k === 'OK') { checkPin(); }
+            else { pressPin(k); }
+        };
         kb.appendChild(b);
     });
 }
@@ -32,81 +43,65 @@ function pressPin(n) {
         pinInput += n;
         document.getElementById('pin-dots').innerText = "•".repeat(pinInput.length);
     }
-    if (pinInput.length === 4) {
-        if (pinInput === cfg.pin) {
-            document.getElementById('lock').style.display = 'none';
-            document.getElementById('sidebar').style.display = 'flex';
-            document.getElementById('main').style.display = 'flex';
-            nav('home');
-        } else {
-            alert("PIN Incorreto!");
-            pinInput = "";
-            document.getElementById('pin-dots').innerText = "";
-        }
+    if (pinInput.length === 4) checkPin();
+}
+
+function checkPin() {
+    if (pinInput === "8888") {
+        document.getElementById('lock').style.display = 'none';
+        document.getElementById('sidebar').style.display = 'flex';
+        document.getElementById('main').style.display = 'flex';
+        nav('home');
+    } else {
+        alert("PIN incorreto (Use 8888)");
+        pinInput = "";
+        document.getElementById('pin-dots').innerText = "";
     }
 }
 
 // --- NAVEGAÇÃO ---
-function nav(view, el) {
-    if (el) {
-        document.querySelectorAll('.side-item').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
+function nav(view, btn) {
+    if (btn) {
+        document.querySelectorAll('.side-item').forEach(i => i.classList.remove('active'));
+        btn.classList.add('active');
     }
+    
     const content = document.getElementById('app-content');
     
     if (view === 'home') {
+        const saldo = txs.reduce((a, b) => a + b.valor, 0);
         content.innerHTML = `
-            <h2>Dashboard</h2>
-            <div style="background:var(--bg2); padding:25px; border-radius:15px; margin-top:20px">
-                <p style="color:var(--txt2)">Saldo Atual</p>
-                <h1 style="color:var(--accent)" id="saldo-total">R$ 0,00</h1>
+            <h2>Resumo Geral</h2>
+            <div class="card">
+                <small style="color:var(--txt2)">SALDO EM CONTA</small>
+                <h1 style="color:var(--accent); font-size:2.5rem">${saldo.toLocaleString('pt-br',{style:'currency',currency:'BRL'})}</h1>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px">
+                <div class="card" style="margin-bottom:0"><h3>Entradas</h3><p style="color:#10b981">R$ 5.000,00</p></div>
+                <div class="card" style="margin-bottom:0"><h3>Saídas</h3><p style="color:#f43f5e">R$ 310,50</p></div>
             </div>
         `;
-        renderSaldo();
-    } else if (view === 'config') {
-        content.innerHTML = `
-            <h2>Sincronização</h2>
-            <div style="background:var(--bg2); padding:20px; border-radius:12px; margin-top:20px">
-                <p style="margin-bottom:10px">Status da Planilha: <b>${cfg.shUrl ? 'Conectado' : 'Sem URL'}</b></p>
-                <button onclick="pullData()" id="btn-sync" style="width:100%; padding:15px; background:var(--accent); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer">
-                    PUXAR DADOS DA PLANILHA
-                </button>
+    } 
+    else if (view === 'transacoes') {
+        content.innerHTML = `<h2>Extrato</h2><div style="margin-top:20px">${txs.map(t => `
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:15px">
+                <div>
+                    <strong>${t.desc}</strong><br>
+                    <small style="color:var(--txt2)">${t.data}</small>
+                </div>
+                <span style="color:${t.valor > 0 ? '#10b981' : '#f43f5e'}">
+                    ${t.valor.toLocaleString('pt-br',{style:'currency',currency:'BRL'})}
+                </span>
             </div>
-        `;
+        `).join('')}</div>`;
     }
-}
-
-// --- SINCRONIZAÇÃO (PUXAR DADOS) ---
-async function pullData() {
-    const btn = document.getElementById('btn-sync');
-    if (!cfg.shUrl) return alert("Configure a URL no config.js primeiro!");
-    
-    btn.innerText = "SINCRONIZANDO...";
-    btn.style.opacity = "0.5";
-    
-    try {
-        const response = await fetch(`${cfg.shUrl}?action=getAppData`);
-        const res = await response.json();
-        
-        if (res.ok && res.payload) {
-            cats = res.payload.cats || cats;
-            txs = res.payload.txs || txs;
-            gs('cats', cats); gs('txs', txs);
-            alert("Sincronizado com sucesso!");
-            nav('config'); // Refresh na tela
-        }
-    } catch (e) {
-        alert("Erro ao conectar na Planilha Google. Verifique a URL.");
-    } finally {
-        btn.innerText = "PUXAR DADOS DA PLANILHA";
-        btn.style.opacity = "1";
+    else if (view === 'perfil') {
+        content.innerHTML = `<h2>Perfil</h2><div class="card">
+            <p><strong>Versão:</strong> 7.84 Local</p>
+            <p><strong>Dados:</strong> Armazenados no Telefone</p>
+            <button onclick="localStorage.clear(); location.reload();" style="margin-top:20px; color:#f43f5e; background:none; border:1px solid #f43f5e; padding:10px; border-radius:5px; cursor:pointer">LIMPAR TODOS OS DADOS</button>
+        </div>`;
     }
-}
-
-function renderSaldo() {
-    const total = txs.reduce((acc, t) => acc + (parseFloat(t.valor) || 0), 0);
-    const el = document.getElementById('saldo-total');
-    if (el) el.innerText = total.toLocaleString('pt-br', {style:'currency', currency:'BRL'});
 }
 
 window.onload = init;

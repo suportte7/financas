@@ -7,91 +7,53 @@
     <style>
         :root {
             --bg: #0f172a; --bg2: #1e293b; --txt: #f8fafc; --txt2: #94a3b8;
-            --accent: #6366f1; --sidebar-w: 260px; --sidebar-collapsed: 70px;
+            --accent: #6366f1; --side-w: 260px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
             height: 100dvh; background: var(--bg); color: var(--txt); 
-            font-family: system-ui, -apple-system, sans-serif; overflow: hidden; 
-            display: flex;
+            font-family: sans-serif; display: flex; overflow: hidden; 
         }
 
-        /* Bloqueio de Tela (Overlay) */
+        /* PIN SCREEN */
         #lock { 
-            position: fixed; inset: 0; background: var(--bg); z-index: 10000; 
+            position: fixed; inset: 0; background: var(--bg); z-index: 9999; 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .pin-dots { font-size: 3rem; height: 60px; margin-bottom: 30px; letter-spacing: 10px; color: var(--accent); }
+        #pin-dots { font-size: 3rem; height: 60px; margin-bottom: 20px; color: var(--accent); letter-spacing: 8px; }
         .pin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
         .pin-btn { width: 70px; height: 70px; border-radius: 50%; background: var(--bg2); color: #fff; font-size: 1.5rem; border: none; cursor: pointer; }
 
-        /* Menu Lateral (Sidebar) */
+        /* SIDEBAR */
         #sidebar {
-            width: var(--sidebar-w); height: 100%; background: var(--bg2);
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: none; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.05);
-            position: relative; z-index: 500;
+            width: var(--side-w); height: 100%; background: var(--bg2);
+            display: none; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.1);
         }
-        #sidebar.collapsed { width: var(--sidebar-collapsed); }
-        
-        .side-header { height: 60px; display: flex; align-items: center; padding: 0 20px; overflow: hidden; white-space: nowrap; }
-        
         .nav-item {
-            width: 100%; height: 50px; display: flex; align-items: center;
-            padding: 0 22px; color: var(--txt2); cursor: pointer; border: none; background: none;
-            transition: 0.2s; overflow: hidden; white-space: nowrap; text-decoration: none;
+            padding: 15px 20px; color: var(--txt2); cursor: pointer; border: none; background: none;
+            text-align: left; font-size: 16px; width: 100%; display: flex; align-items: center;
         }
-        .nav-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
-        .nav-item.active { color: var(--accent); background: rgba(99,102,241,0.1); border-right: 3px solid var(--accent); }
-        .nav-item svg { min-width: 24px; margin-right: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
-        
-        /* Botão Recolher */
-        #toggle-side {
-            position: absolute; bottom: 20px; left: 20px; background: none; border: none; color: var(--txt2); cursor: pointer;
-        }
+        .nav-item:hover, .nav-item.active { color: #fff; background: var(--accent); }
 
-        /* Área de Conteúdo */
-        #main-view { flex: 1; height: 100%; overflow-y: auto; display: none; flex-direction: column; }
-        #app-content { padding: 30px; max-width: 1200px; margin: 0 auto; width: 100%; }
-
-        @media (max-width: 768px) {
-            #sidebar { position: fixed; left: -260px; }
-            #sidebar.open { left: 0; }
-            #main-view { width: 100vw; }
-        }
+        /* CONTENT */
+        #main { flex: 1; display: none; flex-direction: column; overflow-y: auto; padding: 20px; }
     </style>
 </head>
 <body>
 
 <div id="lock">
-    <div class="pin-dots" id="pin-dots"></div>
+    <div id="pin-dots"></div>
     <div class="pin-grid" id="keyboard"></div>
 </div>
 
 <aside id="sidebar">
-    <div class="side-header"><h2 id="side-title">Finanças</h2></div>
-    
-    <button class="nav-item active" onclick="nav('resumo', this)">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-        <span class="nav-label">Dashboard</span>
-    </button>
-    
-    <button class="nav-item" onclick="nav('transacoes', this)">
-        <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        <span class="nav-label">Transações</span>
-    </button>
-    
-    <button class="nav-item" onclick="nav('config', this)">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        <span class="nav-label">Configurações</span>
-    </button>
-
-    <button id="toggle-side" onclick="toggleSidebar()">
-        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
-    </button>
+    <div style="padding: 20px; font-weight: bold; font-size: 20px; color: var(--accent)">Finanças Pro</div>
+    <button class="nav-item active" onclick="nav('home', this)">Dashboard</button>
+    <button class="nav-item" onclick="nav('extrato', this)">Extrato</button>
+    <button class="nav-item" onclick="nav('config', this)">Ajustes</button>
 </aside>
 
-<main id="main-view">
+<main id="main">
     <div id="app-content"></div>
 </main>
 

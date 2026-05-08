@@ -1,22 +1,44 @@
-// FINANÇAS PRO V7.84 - CORE INTEGRAL
-const VERSAO = "7.84";
+// FINANÇAS PRO v7.84 - LÓGICA SIDEBAR E CORE
+const VERSAO_ATUAL = '7.84';
 const K = k => 'fin6_' + k;
-const gl = k => JSON.parse(localStorage.getItem(K(k)));
+const gl = k => { try { const v = localStorage.getItem(K(k)); return v ? JSON.parse(v) : null; } catch(e) { return null; } };
 const gs = (k, v) => localStorage.setItem(K(k), JSON.stringify(v));
 
-// Estado Inicial
-let cats = gl('cats') || [];
-let accs = gl('accs') || [];
-let txs = gl('txs') || [];
+// Estado Global
 let cfg = gl('cfg') || { shUrl: typeof APP_SCRIPT_URL !== 'undefined' ? APP_SCRIPT_URL : '', pin: '8888' };
+let cats = gl('cats') || [];
+let txs = gl('txs') || [];
 let pinInput = "";
+
+// --- CONTROLE DO MENU LATERAL (SIDEBAR) ---
+let sidebarOpen = true;
+
+function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    const labels = document.querySelectorAll('.nav-label');
+    const btn = document.getElementById('toggle-side');
+    
+    sidebarOpen = !sidebarOpen;
+    
+    if (sidebarOpen) {
+        sb.classList.remove('collapsed');
+        btn.style.transform = 'rotate(0deg)';
+        labels.forEach(l => l.style.display = 'inline');
+    } else {
+        sb.classList.add('collapsed');
+        btn.style.transform = 'rotate(180deg)';
+        labels.forEach(l => l.style.display = 'none');
+    }
+}
 
 // --- SISTEMA DE BLOQUEIO ---
 function pressPin(n) {
     if (pinInput.length < 4) {
         pinInput += n;
-        document.getElementById('pin-dots').innerText = "•".repeat(pinInput.length);
+        const dots = document.getElementById('pin-dots');
+        if (dots) dots.innerText = "•".repeat(pinInput.length);
     }
+    
     if (pinInput.length === 4) {
         if (pinInput === cfg.pin) {
             unlock();
@@ -29,88 +51,81 @@ function pressPin(n) {
 }
 
 function unlock() {
+    // 1. Libera a visualização
     document.getElementById('lock').style.display = 'none';
-    document.getElementById('app-shell').style.display = 'flex';
-    nav('resumo', document.querySelector('.bnav-btn')); // Força abertura da Home
-    if (cfg.shUrl) pullData(); // Puxa dados em segundo plano
+    document.getElementById('sidebar').style.display = 'flex';
+    document.getElementById('main-view').style.display = 'flex';
+    
+    // 2. Carrega a Home
+    nav('resumo', document.querySelector('.nav-item'));
+    
+    // 3. Sincroniza
+    if (cfg.shUrl) pullData();
 }
 
-// --- NAVEGAÇÃO ENTRE TELAS ---
-function nav(view, btn) {
-    // Atualiza botões
-    document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
+// --- NAVEGAÇÃO ---
+function nav(view, el) {
+    // Marcar botão ativo
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
 
-    const container = document.getElementById('app-content');
+    const content = document.getElementById('app-content');
     
     if (view === 'resumo') {
-        container.innerHTML = `
-            <h2>Resumo</h2>
-            <div style="background:var(--bg2); padding:20px; border-radius:15px; margin-top:15px">
-                <p style="color:var(--txt2)">Saldo Atual</p>
-                <h1 id="total-saldo">R$ 0,00</h1>
+        content.innerHTML = `
+            <h1>Dashboard</h1>
+            <div style="background:var(--bg2); padding:25px; border-radius:15px; margin-top:20px; border:1px solid rgba(255,255,255,0.05)">
+                <span style="color:var(--txt2); font-size:12px; font-weight:bold; letter-spacing:1px">SALDO TOTAL DISPONÍVEL</span>
+                <h1 style="font-size:32px; color:var(--accent); margin-top:10px" id="render-saldo">R$ 0,00</h1>
             </div>
         `;
-        updateTotal();
+        renderBalance();
     } 
-    else if (view === 'transacoes') {
-        container.innerHTML = `<h2>Extrato</h2><p>Carregando transações...</p>`;
-    }
     else if (view === 'config') {
-        renderConfig(container);
-    }
-}
-
-// --- CONFIGURAÇÕES E EDIÇÃO ---
-function renderConfig(container) {
-    container.innerHTML = `
-        <h3>Ajustes</h3>
-        <button onclick="pullData()" style="width:100%; padding:15px; background:var(--accent); color:#fff; border:none; border-radius:10px; margin:15px 0">Sincronizar Agora</button>
-        <div class="section">
-            <h4>Categorias (${cats.length})</h4>
-            <div id="cat-list"></div>
-        </div>
-    `;
-    const list = document.getElementById('cat-list');
-    cats.forEach(c => {
-        list.innerHTML += `
-            <div style="display:flex; justify-content:space-between; background:var(--bg2); padding:10px; border-radius:8px; margin-top:5px">
-                <span>${c.emoji} ${c.nome}</span>
-                <button onclick="editCat('${c.id}')" style="color:var(--accent); background:none; border:none">Editar</button>
+        content.innerHTML = `
+            <h1>Configurações</h1>
+            <div style="margin-top:20px">
+                <button onclick="pullData()" style="padding:12px 20px; background:var(--accent); color:#fff; border:none; border-radius:8px; cursor:pointer">Sincronizar Planilha</button>
+                <div style="margin-top:30px">
+                    <h3>Categorias (${cats.length})</h3>
+                    <div id="list-cats" style="margin-top:10px"></div>
+                </div>
             </div>
         `;
-    });
+        const list = document.getElementById('list-cats');
+        cats.forEach(c => {
+            list.innerHTML += `
+                <div style="display:flex; justify-content:space-between; background:var(--bg2); padding:15px; border-radius:10px; margin-bottom:8px">
+                    <span>${c.emoji} ${c.nome}</span>
+                    <button style="color:var(--accent); background:none; border:none; font-weight:bold">EDITAR</button>
+                </div>
+            `;
+        });
+    }
 }
 
 // --- DADOS ---
+function renderBalance() {
+    const total = txs.reduce((acc, t) => acc + (parseFloat(t.valor) || 0), 0);
+    const el = document.getElementById('render-saldo');
+    if (el) el.innerText = total.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'});
+}
+
 async function pullData() {
-    if (!cfg.shUrl) return;
     try {
         const r = await fetch(`${cfg.shUrl}?action=getAppData`);
         const d = await r.json();
         if (d.ok && d.payload) {
             cats = d.payload.cats || cats;
-            accs = d.payload.accs || accs;
             txs = d.payload.txs || txs;
-            saveLocal();
-            // Se estiver na tela de resumo, atualiza o saldo na hora
-            if (document.getElementById('total-saldo')) updateTotal();
+            gs('cats', cats); gs('txs', txs);
+            if (document.getElementById('render-saldo')) renderBalance();
         }
-    } catch (e) { console.warn("Offline ou erro na URL"); }
+    } catch(e) { console.log("Offline"); }
 }
 
-function saveLocal() {
-    gs('cats', cats); gs('accs', accs); gs('txs', txs); gs('cfg', cfg);
-}
-
-function updateTotal() {
-    const total = txs.reduce((acc, t) => acc + (parseFloat(t.valor) || 0), 0);
-    const el = document.getElementById('total-saldo');
-    if (el) el.innerText = total.toLocaleString('pt-br', {style: 'currency', currency: 'BRL'});
-}
-
-// --- TECLADO INICIAL ---
-function initKeyboard() {
+// --- TECLADO ---
+function init() {
     const kb = document.getElementById('keyboard');
     if (!kb) return;
     kb.innerHTML = "";
@@ -118,9 +133,9 @@ function initKeyboard() {
         const b = document.createElement('button');
         b.className = 'pin-btn';
         b.innerText = k;
-        b.onclick = () => k === 'C' ? (pinInput = "", document.getElementById('pin-dots').innerText = "") : pressPin(k);
+        b.onclick = () => k === 'C' ? (pinInput="", document.getElementById('pin-dots').innerText="") : pressPin(k);
         kb.appendChild(b);
     });
 }
 
-window.addEventListener('DOMContentLoaded', initKeyboard);
+window.onload = init;

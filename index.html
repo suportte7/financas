@@ -3,53 +3,62 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
     <title>Finanças Pro v7.84</title>
     <style>
         :root {
             --bg: #0f172a; --bg2: #1e293b; --txt: #f8fafc; --txt2: #94a3b8;
-            --accent: #6366f1; --safe-top: env(safe-area-inset-top, 0px);
-            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --accent: #6366f1; --sidebar-w: 260px; --sidebar-collapsed: 70px;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; touch-action: manipulation; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
             height: 100dvh; background: var(--bg); color: var(--txt); 
-            font-family: -apple-system, system-ui, sans-serif; overflow: hidden; 
+            font-family: system-ui, -apple-system, sans-serif; overflow: hidden; 
+            display: flex;
         }
 
-        /* Bloqueio */
+        /* Bloqueio de Tela (Overlay) */
         #lock { 
-            position: fixed; inset: 0; background: var(--bg); z-index: 9999; 
+            position: fixed; inset: 0; background: var(--bg); z-index: 10000; 
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         .pin-dots { font-size: 3rem; height: 60px; margin-bottom: 30px; letter-spacing: 10px; color: var(--accent); }
         .pin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .pin-btn { 
-            width: 75px; height: 75px; border-radius: 50%; background: var(--bg2); 
-            color: #fff; font-size: 1.5rem; border: none; cursor: pointer; 
-        }
-        .pin-btn:active { background: var(--accent); }
+        .pin-btn { width: 70px; height: 70px; border-radius: 50%; background: var(--bg2); color: #fff; font-size: 1.5rem; border: none; cursor: pointer; }
 
-        /* App Main */
-        #app-shell { display: none; height: 100dvh; flex-direction: column; }
-        #app-content { 
-            flex: 1; overflow-y: auto; padding: calc(20px + var(--safe-top)) 20px 100px 20px; 
+        /* Menu Lateral (Sidebar) */
+        #sidebar {
+            width: var(--sidebar-w); height: 100%; background: var(--bg2);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: none; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.05);
+            position: relative; z-index: 500;
+        }
+        #sidebar.collapsed { width: var(--sidebar-collapsed); }
+        
+        .side-header { height: 60px; display: flex; align-items: center; padding: 0 20px; overflow: hidden; white-space: nowrap; }
+        
+        .nav-item {
+            width: 100%; height: 50px; display: flex; align-items: center;
+            padding: 0 22px; color: var(--txt2); cursor: pointer; border: none; background: none;
+            transition: 0.2s; overflow: hidden; white-space: nowrap; text-decoration: none;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .nav-item.active { color: var(--accent); background: rgba(99,102,241,0.1); border-right: 3px solid var(--accent); }
+        .nav-item svg { min-width: 24px; margin-right: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+        
+        /* Botão Recolher */
+        #toggle-side {
+            position: absolute; bottom: 20px; left: 20px; background: none; border: none; color: var(--txt2); cursor: pointer;
         }
 
-        /* Menu Inferior */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            height: calc(70px + var(--safe-bottom)); background: var(--bg2);
-            display: flex; justify-content: space-around; align-items: center;
-            padding-bottom: var(--safe-bottom); border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000;
+        /* Área de Conteúdo */
+        #main-view { flex: 1; height: 100%; overflow-y: auto; display: none; flex-direction: column; }
+        #app-content { padding: 30px; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+        @media (max-width: 768px) {
+            #sidebar { position: fixed; left: -260px; }
+            #sidebar.open { left: 0; }
+            #main-view { width: 100vw; }
         }
-        .bnav-btn { 
-            background: none; border: none; color: var(--txt2); 
-            display: flex; flex-direction: column; align-items: center; font-size: 10px; 
-        }
-        .bnav-btn.active { color: var(--accent); }
-        .bnav-btn svg { width: 24px; height: 24px; margin-bottom: 4px; fill: none; stroke: currentColor; stroke-width: 2; }
     </style>
 </head>
 <body>
@@ -59,20 +68,32 @@
     <div class="pin-grid" id="keyboard"></div>
 </div>
 
-<div id="app-shell">
+<aside id="sidebar">
+    <div class="side-header"><h2 id="side-title">Finanças</h2></div>
+    
+    <button class="nav-item active" onclick="nav('resumo', this)">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span class="nav-label">Dashboard</span>
+    </button>
+    
+    <button class="nav-item" onclick="nav('transacoes', this)">
+        <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span class="nav-label">Transações</span>
+    </button>
+    
+    <button class="nav-item" onclick="nav('config', this)">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span class="nav-label">Configurações</span>
+    </button>
+
+    <button id="toggle-side" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
+    </button>
+</aside>
+
+<main id="main-view">
     <div id="app-content"></div>
-    <nav class="bottom-nav">
-        <button class="bnav-btn active" onclick="nav('resumo', this)">
-            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Início
-        </button>
-        <button class="bnav-btn" onclick="nav('transacoes', this)">
-            <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Extrato
-        </button>
-        <button class="bnav-btn" onclick="nav('config', this)">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Ajustes
-        </button>
-    </nav>
-</div>
+</main>
 
 <script src="config.js"></script>
 <script src="app.js"></script>

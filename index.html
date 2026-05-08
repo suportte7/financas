@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+    <title>Finanças Pro v7.84</title>
+    <style>
+        :root {
+            --bg: #0f172a; --bg2: #1e293b; --txt: #f8fafc; --txt2: #94a3b8;
+            --accent: #6366f1; --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; touch-action: manipulation; }
+        body { 
+            height: 100dvh; background: var(--bg); color: var(--txt); 
+            font-family: -apple-system, system-ui, sans-serif; overflow: hidden; 
+        }
+
+        /* Bloqueio */
+        #lock { 
+            position: fixed; inset: 0; background: var(--bg); z-index: 9999; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .pin-dots { font-size: 3rem; height: 60px; margin-bottom: 30px; letter-spacing: 10px; color: var(--accent); }
+        .pin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .pin-btn { 
+            width: 75px; height: 75px; border-radius: 50%; background: var(--bg2); 
+            color: #fff; font-size: 1.5rem; border: none; cursor: pointer; 
+        }
+        .pin-btn:active { background: var(--accent); }
+
+        /* App Main */
+        #app-shell { display: none; height: 100dvh; flex-direction: column; }
+        #app-content { 
+            flex: 1; overflow-y: auto; padding: calc(20px + var(--safe-top)) 20px 100px 20px; 
+        }
+
+        /* Menu Inferior */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            height: calc(70px + var(--safe-bottom)); background: var(--bg2);
+            display: flex; justify-content: space-around; align-items: center;
+            padding-bottom: var(--safe-bottom); border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000;
+        }
+        .bnav-btn { 
+            background: none; border: none; color: var(--txt2); 
+            display: flex; flex-direction: column; align-items: center; font-size: 10px; 
+        }
+        .bnav-btn.active { color: var(--accent); }
+        .bnav-btn svg { width: 24px; height: 24px; margin-bottom: 4px; fill: none; stroke: currentColor; stroke-width: 2; }
+    </style>
+</head>
+<body>
+
+<div id="lock">
+    <div class="pin-dots" id="pin-dots"></div>
+    <div class="pin-grid" id="keyboard"></div>
+</div>
+
+<div id="app-shell">
+    <div id="app-content"></div>
+    <nav class="bottom-nav">
+        <button class="bnav-btn active" onclick="nav('resumo', this)">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Início
+        </button>
+        <button class="bnav-btn" onclick="nav('transacoes', this)">
+            <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Extrato
+        </button>
+        <button class="bnav-btn" onclick="nav('config', this)">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Ajustes
+        </button>
+    </nav>
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

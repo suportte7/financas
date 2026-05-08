@@ -1,0 +1,2 @@
+// ATENÇÃO: Cole sua URL do Apps Script aqui para que ela persista no GitHub
+const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw2SQf2vrzgbEVFrKAg_y41Eg4CpZr3ts1J-6bggn50r4lMlB8CSJsnDZS6k06hNqow0w/exec';

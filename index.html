@@ -3,40 +3,77 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
-    <title>Finanças Pro Local v7.84</title>
+    <title>Finanças Pro v7.84 - Full Local</title>
     <style>
         :root {
-            --bg: #0f172a; --bg2: #1e293b; --txt: #f8fafc; --txt2: #94a3b8;
-            --accent: #6366f1; --side-w: 240px; --side-min: 70px;
+            --bg: #0f172a; --bg2: #1e293b; --bg3: #334155;
+            --txt: #f8fafc; --txt2: #94a3b8; --accent: #6366f1;
+            --side-w: 260px; --side-min: 70px;
+            --green: #10b981; --red: #f43f5e;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
         body { height: 100dvh; background: var(--bg); color: var(--txt); display: flex; overflow: hidden; }
 
-        /* BLOQUEIO */
+        /* BLOQUEIO PIN */
         #lock { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        #pin-dots { font-size: 3rem; height: 60px; margin-bottom: 20px; color: var(--accent); letter-spacing: 10px; }
+        #pin-dots { font-size: 3rem; height: 60px; margin-bottom: 20px; color: var(--accent); letter-spacing: 12px; font-weight: bold; }
         .pin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .pin-btn { width: 75px; height: 75px; border-radius: 50%; background: var(--bg2); color: #fff; font-size: 1.5rem; border: none; cursor: pointer; }
+        .pin-btn { width: 75px; height: 75px; border-radius: 50%; background: var(--bg2); color: #fff; font-size: 1.5rem; border: none; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.05); }
+        .pin-btn:active { background: var(--accent); transform: scale(0.9); }
 
-        /* SIDEBAR */
+        /* SIDEBAR PROFISSIONAL */
         #sidebar {
             width: var(--side-w); height: 100%; background: var(--bg2);
-            display: none; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.05);
-            transition: width 0.3s ease; position: relative;
+            display: none; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.1);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; z-index: 900;
         }
         #sidebar.collapsed { width: var(--side-min); }
-        .side-header { height: 70px; display: flex; align-items: center; padding: 0 20px; color: var(--accent); font-weight: bold; }
+        .side-header { height: 70px; display: flex; align-items: center; padding: 0 22px; color: var(--accent); font-weight: 800; font-size: 1.1rem; letter-spacing: 1px; overflow: hidden; white-space: nowrap; }
         
+        .side-nav { flex: 1; overflow-y: auto; padding-top: 10px; }
         .side-item {
-            width: 100%; height: 55px; border: none; background: none; color: var(--txt2);
-            display: flex; align-items: center; padding: 0 23px; cursor: pointer; overflow: hidden;
+            width: 100%; height: 50px; border: none; background: none; color: var(--txt2);
+            display: flex; align-items: center; padding: 0 23px; cursor: pointer;
+            overflow: hidden; white-space: nowrap; transition: 0.2s; text-decoration: none;
         }
-        .side-item.active { color: #fff; background: rgba(99,102,241,0.1); border-left: 4px solid var(--accent); }
+        .side-item:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .side-item.active { color: #fff; background: var(--accent); box-shadow: 0 4px 15px rgba(99,102,241,0.3); }
+        .side-item svg { min-width: 24px; margin-right: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
 
-        /* MAIN */
-        #main { flex: 1; display: none; flex-direction: column; overflow-y: auto; }
-        #app-content { padding: 30px; max-width: 1000px; width: 100%; margin: 0 auto; }
-        .card { background: var(--bg2); padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        .btn-collapse {
+            height: 50px; background: rgba(0,0,0,0.2); border: none; color: var(--txt2); 
+            display: flex; align-items: center; padding: 0 25px; cursor: pointer;
+        }
+
+        /* ÁREA PRINCIPAL */
+        #main { flex: 1; display: none; flex-direction: column; overflow-y: auto; position: relative; background: radial-gradient(circle at top right, #1e293b, #0f172a); }
+        #app-content { padding: 30px; max-width: 1100px; width: 100%; margin: 0 auto; }
+
+        /* COMPONENTES DE UI */
+        .card { background: var(--bg2); padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        
+        h2 { margin-bottom: 20px; font-weight: 700; font-size: 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+        
+        /* FORMULÁRIOS */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: var(--txt2); font-size: 0.85rem; }
+        input, select, textarea { 
+            width: 100%; padding: 12px; border-radius: 8px; background: var(--bg3); 
+            border: 1px solid rgba(255,255,255,0.1); color: #fff; outline: none; font-size: 1rem;
+        }
+        .btn-primary { background: var(--accent); color: #fff; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        
+        /* MOBILE ADJUSTS */
+        @media (max-width: 768px) {
+            #sidebar { position: fixed; bottom: 0; left: 0; width: 100%; height: 65px; border-right: none; border-top: 1px solid rgba(255,255,255,0.1); flex-direction: row; }
+            .side-header, .btn-collapse, .nav-label { display: none; }
+            .side-nav { display: flex; padding-top: 0; width: 100%; }
+            .side-item { flex-direction: column; justify-content: center; padding: 0; font-size: 10px; }
+            .side-item svg { margin-right: 0; margin-bottom: 4px; width: 20px; }
+            #main { padding-bottom: 80px; }
+            #app-content { padding: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -47,10 +84,41 @@
 </div>
 
 <aside id="sidebar">
-    <div class="side-header"><span>FINANÇAS PRO</span></div>
-    <button class="side-item active" onclick="nav('home', this)">Dashboard</button>
-    <button class="side-item" onclick="nav('transacoes', this)">Extrato</button>
-    <button class="side-item" onclick="nav('perfil', this)">Configurações</button>
+    <div class="side-header">
+        <svg width="24" height="24" style="margin-right:10px" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <span class="nav-label">FINANÇAS PRO</span>
+    </div>
+    
+    <nav class="side-nav">
+        <button class="side-item active" onclick="nav('dashboard', this)">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            <span class="nav-label">Dashboard</span>
+        </button>
+        
+        <button class="side-item" onclick="nav('lancar', this)">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+            <span class="nav-label">Novo Lançamento</span>
+        </button>
+        
+        <button class="side-item" onclick="nav('extrato', this)">
+            <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+            <span class="nav-label">Extrato Detalhado</span>
+        </button>
+        
+        <button class="side-item" onclick="nav('categorias', this)">
+            <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            <span class="nav-label">Categorias</span>
+        </button>
+        
+        <button class="side-item" onclick="nav('config', this)">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span class="nav-label">Config/Backup</span>
+        </button>
+    </nav>
+
+    <button class="btn-collapse" onclick="document.getElementById('sidebar').classList.toggle('collapsed')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
+    </button>
 </aside>
 
 <main id="main">

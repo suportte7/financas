@@ -1,107 +1,62 @@
-// --- DADOS FICTÍCIOS PARA TESTE ---
-const DADOS_EXEMPLO = {
-    cats: [
-        {id:'c1', nome:'Mercado', emoji:'🛒'},
-        {id:'c2', nome:'Salário', emoji:'💰'},
-        {id:'c3', nome:'Lazer', emoji:'🎬'}
-    ],
-    txs: [
-        {id:'t1', desc:'Supermercado Silva', valor: -250.50, data:'2024-05-01', catId:'c1'},
-        {id:'t2', desc:'Salário Mensal', valor: 5000.00, data:'2024-05-05', catId:'c2'},
-        {id:'t3', desc:'Cinema Shopping', valor: -60.00, data:'2024-05-06', catId:'c3'}
-    ]
-};
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
+    <title>Finanças Pro Local v7.84</title>
+    <style>
+        :root {
+            --bg: #0f172a; --bg2: #1e293b; --txt: #f8fafc; --txt2: #94a3b8;
+            --accent: #6366f1; --side-w: 240px; --side-min: 70px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+        body { height: 100dvh; background: var(--bg); color: var(--txt); display: flex; overflow: hidden; }
 
-// --- LOGICA CORE ---
-const K = k => 'fin6_local_' + k;
-const gl = k => JSON.parse(localStorage.getItem(K(k)));
-const gs = (k, v) => localStorage.setItem(K(k), JSON.stringify(v));
+        /* BLOQUEIO */
+        #lock { position: fixed; inset: 0; background: var(--bg); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        #pin-dots { font-size: 3rem; height: 60px; margin-bottom: 20px; color: var(--accent); letter-spacing: 10px; }
+        .pin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .pin-btn { width: 75px; height: 75px; border-radius: 50%; background: var(--bg2); color: #fff; font-size: 1.5rem; border: none; cursor: pointer; }
 
-let cats = gl('cats') || DADOS_EXEMPLO.cats;
-let txs = gl('txs') || DADOS_EXEMPLO.txs;
-let pinInput = "";
+        /* SIDEBAR */
+        #sidebar {
+            width: var(--side-w); height: 100%; background: var(--bg2);
+            display: none; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.05);
+            transition: width 0.3s ease; position: relative;
+        }
+        #sidebar.collapsed { width: var(--side-min); }
+        .side-header { height: 70px; display: flex; align-items: center; padding: 0 20px; color: var(--accent); font-weight: bold; }
+        
+        .side-item {
+            width: 100%; height: 55px; border: none; background: none; color: var(--txt2);
+            display: flex; align-items: center; padding: 0 23px; cursor: pointer; overflow: hidden;
+        }
+        .side-item.active { color: #fff; background: rgba(99,102,241,0.1); border-left: 4px solid var(--accent); }
 
-// --- SISTEMA DE BLOQUEIO ---
-function init() {
-    const kb = document.getElementById('keyboard');
-    if (!kb) return;
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 'C', 0, 'OK'].forEach(k => {
-        const b = document.createElement('button');
-        b.className = 'pin-btn';
-        b.innerText = k;
-        b.onclick = () => {
-            if (k === 'C') { pinInput = ""; document.getElementById('pin-dots').innerText = ""; }
-            else if (k === 'OK') { checkPin(); }
-            else { pressPin(k); }
-        };
-        kb.appendChild(b);
-    });
-}
+        /* MAIN */
+        #main { flex: 1; display: none; flex-direction: column; overflow-y: auto; }
+        #app-content { padding: 30px; max-width: 1000px; width: 100%; margin: 0 auto; }
+        .card { background: var(--bg2); padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
+    </style>
+</head>
+<body>
 
-function pressPin(n) {
-    if (pinInput.length < 4) {
-        pinInput += n;
-        document.getElementById('pin-dots').innerText = "•".repeat(pinInput.length);
-    }
-    if (pinInput.length === 4) checkPin();
-}
+<div id="lock">
+    <div id="pin-dots"></div>
+    <div class="pin-grid" id="keyboard"></div>
+</div>
 
-function checkPin() {
-    if (pinInput === "8888") {
-        document.getElementById('lock').style.display = 'none';
-        document.getElementById('sidebar').style.display = 'flex';
-        document.getElementById('main').style.display = 'flex';
-        nav('home');
-    } else {
-        alert("PIN incorreto (Use 8888)");
-        pinInput = "";
-        document.getElementById('pin-dots').innerText = "";
-    }
-}
+<aside id="sidebar">
+    <div class="side-header"><span>FINANÇAS PRO</span></div>
+    <button class="side-item active" onclick="nav('home', this)">Dashboard</button>
+    <button class="side-item" onclick="nav('transacoes', this)">Extrato</button>
+    <button class="side-item" onclick="nav('perfil', this)">Configurações</button>
+</aside>
 
-// --- NAVEGAÇÃO ---
-function nav(view, btn) {
-    if (btn) {
-        document.querySelectorAll('.side-item').forEach(i => i.classList.remove('active'));
-        btn.classList.add('active');
-    }
-    
-    const content = document.getElementById('app-content');
-    
-    if (view === 'home') {
-        const saldo = txs.reduce((a, b) => a + b.valor, 0);
-        content.innerHTML = `
-            <h2>Resumo Geral</h2>
-            <div class="card">
-                <small style="color:var(--txt2)">SALDO EM CONTA</small>
-                <h1 style="color:var(--accent); font-size:2.5rem">${saldo.toLocaleString('pt-br',{style:'currency',currency:'BRL'})}</h1>
-            </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px">
-                <div class="card" style="margin-bottom:0"><h3>Entradas</h3><p style="color:#10b981">R$ 5.000,00</p></div>
-                <div class="card" style="margin-bottom:0"><h3>Saídas</h3><p style="color:#f43f5e">R$ 310,50</p></div>
-            </div>
-        `;
-    } 
-    else if (view === 'transacoes') {
-        content.innerHTML = `<h2>Extrato</h2><div style="margin-top:20px">${txs.map(t => `
-            <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:15px">
-                <div>
-                    <strong>${t.desc}</strong><br>
-                    <small style="color:var(--txt2)">${t.data}</small>
-                </div>
-                <span style="color:${t.valor > 0 ? '#10b981' : '#f43f5e'}">
-                    ${t.valor.toLocaleString('pt-br',{style:'currency',currency:'BRL'})}
-                </span>
-            </div>
-        `).join('')}</div>`;
-    }
-    else if (view === 'perfil') {
-        content.innerHTML = `<h2>Perfil</h2><div class="card">
-            <p><strong>Versão:</strong> 7.84 Local</p>
-            <p><strong>Dados:</strong> Armazenados no Telefone</p>
-            <button onclick="localStorage.clear(); location.reload();" style="margin-top:20px; color:#f43f5e; background:none; border:1px solid #f43f5e; padding:10px; border-radius:5px; cursor:pointer">LIMPAR TODOS OS DADOS</button>
-        </div>`;
-    }
-}
+<main id="main">
+    <div id="app-content"></div>
+</main>
 
-window.onload = init;
+<script src="app.js"></script>
+</body>
+</html>

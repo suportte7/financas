@@ -1,15 +1,43 @@
-# Finanças Pessoais — v7.84
+# Finanças Pessoais — V1
 
-## Changelog v7.84
-- ✅ **Filtro Unificado v7.84**: o botão ☰ no cabeçalho agora abre o mesmo painel da página Transações (períodos rápidos + chips multi-select de Contas, Pagamentos, Cartões, Categorias e Subcategorias) em **Resumo, Calendário, Parcelamentos, Análise, Orçamento, Relatório, Grade de Dados** e Transações. Os gráficos e listas atualizam reativamente ao aplicar o filtro.
-- ✅ **Edição Estrutural Completa (CRUD)**: editar, ativar e desativar Contas, Cartões, Pagamentos, Categorias e Subcategorias direto nas abas de configuração. O formulário pré-carrega os dados e o botão muda para "Atualizar Registro".
-- ✅ **Sistema de Metas Multi-contas**: a meta de economia agora considera o somatório dos saldos das contas marcadas no Perfil (1 ou várias). O indicador visual reflete o progresso sobre essa soma.
-- ✅ **Persistência de URL via Backup**: `scriptUrl` é salva no `localStorage` e incluída em `importar_bak.json`. Em novos dispositivos, basta importar para pular a tela de configuração inicial.
-- ✅ **Hierarquia de lançamento**: Conta → Cartão → Função (se dual) → Categoria → Subcategoria.
-- ✅ **Versão dinâmica**: `APP_VERSION = "7.84"` no `app.js` atualiza automaticamente o `<title>` e o rodapé.
-- ✅ **Apps Script**: `updateRowById` localiza por ID único (col. 12) e aplica mudanças sem perder o histórico vinculado.
+Versão atual: **V1**.
 
-## Como usar
-1. Abra Apps Script da sua planilha → cole `apps-script.gs` → Implantar como Web App (Acesso: Qualquer pessoa).
-2. Cole a URL gerada em **Sync** ou importe um backup que já a contenha.
-3. Lance despesas, filtre tudo pelo botão ☰ e edite/ative/desative qualquer cadastro pelos ícones ✏️ / 🔘.
+## Atualização
+
+- Corrigido o problema da tela no celular ficar cortada pela metade.
+- Aplicada altura real do viewport mobile com `visualViewport` e `--app-height`.
+- Layout principal, menu lateral, conteúdo e tela de PIN agora respeitam 100% da área visível.
+- Filtros mantidos inline, sem modal.
+- README completo atualizado no pacote.
+
+## Recursos
+
+- Dashboard financeiro.
+- Lançamentos.
+- Transações.
+- Calendário.
+- Parcelamentos.
+- Assinaturas.
+- Orçamento.
+- Relatórios.
+- Cadastros.
+- Perfil com metas.
+- Importar e exportar dados.
+- PWA responsivo.
+
+## Arquivos do pacote
+
+- `index.html`
+- `app.js`
+- `config.js`
+- `sw.js`
+- `manifest.json`
+- `apps-script.gs`
+- `importar_bak.json`
+- `favicon.ico`
+- `icons/`
+- `README.md`
+
+## Observação
+
+Este ZIP segue o padrão de organização combinado: arquivos principais na raiz e ícones dentro da pasta `icons/`.

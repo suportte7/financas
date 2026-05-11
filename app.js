@@ -1,9 +1,9 @@
 // FINANÇAS PESSOAIS V1
 // Recomeço limpo
 
-const APP_VER = 'V1';
-const VERSAO_ATUAL = '1';
-const APP_VERSION = '1';
+const APP_VER = 'V1.1';
+const VERSAO_ATUAL = '1.1';
+const APP_VERSION = '1.1';
 // FINANÇAS V1 — app.js
 const K=k=>'fin6_'+k,gl=k=>{try{const v=localStorage.getItem(K(k));return v?JSON.parse(v):null}catch{return null}},gs=(k,v)=>localStorage.setItem(K(k),JSON.stringify(v));
 let cats=gl('cats')||[{id:'ali',nome:'Alimentação',emoji:'🍽',cor:'#6366f1'},{id:'trp',nome:'Transporte',emoji:'🚗',cor:'#14b8a6'},{id:'laz',nome:'Lazer',emoji:'🎮',cor:'#8b5cf6'},{id:'sau',nome:'Saúde',emoji:'💊',cor:'#f43f5e'},{id:'com',nome:'Compras',emoji:'🛍',cor:'#f59e0b'},{id:'out',nome:'Outros',emoji:'📦',cor:'#64748b'}];
@@ -280,8 +280,40 @@ function syncUI(s,m){const d=document.getElementById('sdot'),t=document.getEleme
 function updSyncBnr(){const b=document.getElementById('bnr-sync'),cnt=pend.length;if(cnt>0){document.getElementById('bnr-sync-txt').textContent=`${cnt} pendente(s) ${navigator.onLine?'— sync disponível':'— sem internet'}`;b.classList.add('on')}else b.classList.remove('on')}
 async function manSync(){if(!cfg.shUrl){nav('planilha',null);toast('Configure a URL em Planilha → Sync.');return}if(!navigator.onLine){toast('Sem internet.');return}await doSync()}
 async function testSync(){if(!cfg.shUrl){toast('Cole a URL primeiro.');return}if(!navigator.onLine){toast('Sem internet.');return}syncUI('sync','Testando...');const st=document.getElementById('sh-url-status');try{const res=await fetch(cfg.shUrl+'?action=ping');const json=await res.json();if(json.ok){syncUI('on','Conectado ✓');toast('✓ Conexão confirmada!');if(st)st.innerHTML=`<span style="color:var(--eme)">✓ Conectado ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</span>`}else{syncUI('off','Erro');if(st)st.innerHTML=`<span style="color:var(--rose)">✗ ${json.error||'Erro'}</span>`}}catch{try{await fetch(cfg.shUrl+'?action=ping',{mode:'no-cors'});syncUI('on','URL ok');toast('URL alcançada. Faça um lançamento e veja na planilha.');if(st)st.innerHTML=`<span style="color:var(--amb)">⚡ URL alcançada — confirme com um lançamento</span>`}catch{syncUI('off','Falha');toast('URL não alcançada. Verifique se publicou com "Qualquer pessoa".');if(st)st.innerHTML=`<span style="color:var(--rose)">✗ URL não alcançada</span>`}}}
-function saveSyncCfg(){cfg.shUrl=(document.getElementById('sh-url')||{}).value?.trim()||'';cfg.sheetUrl=(document.getElementById('sh-sheet-url')||{}).value?.trim()||'';saveAll();toast('Configuração salva! Clique em Testar.');renderSyncSt()}
-function openSheetDirect(){const url=cfg.sheetUrl;if(!url){toast('Configure a URL da planilha em Planilha/Sync → Configurar.');return}window.open(url,'_blank')}
+async function saveSyncCfg(){
+  cfg.shUrl=(document.getElementById('sh-url')||{}).value?.trim()||'';
+  cfg.sheetUrl=(document.getElementById('sh-sheet-url')||{}).value?.trim()||'';
+  // Auto-buscar URL da planilha se só shUrl foi informado
+  if(cfg.shUrl && !cfg.sheetUrl){
+    try{
+      const r=await fetch(cfg.shUrl+'?action=info');
+      const j=await r.json();
+      if(j&&j.ok&&j.sheetUrl){
+        cfg.sheetUrl=j.sheetUrl;
+        const su=document.getElementById('sh-sheet-url'); if(su) su.value=j.sheetUrl;
+        toast('✓ URL da planilha detectada automaticamente');
+      }
+    }catch(e){}
+  }
+  saveAll();
+  const b=document.getElementById('first-run-banner'); if(b&&cfg.shUrl) b.style.display='none';
+  toast('Configuração salva! Clique em Testar.');
+  renderSyncSt(); updateSyncHero();
+}
+async function openSheetDirect(){
+  if(cfg.sheetUrl){window.open(cfg.sheetUrl,'_blank');return}
+  if(!cfg.shUrl){toast('Configure a URL do Apps Script primeiro.');return}
+  toast('🔎 Buscando URL da planilha...');
+  try{
+    const r=await fetch(cfg.shUrl+'?action=info');
+    const j=await r.json();
+    if(j&&j.ok&&j.sheetUrl){
+      cfg.sheetUrl=j.sheetUrl; saveAll();
+      const su=document.getElementById('sh-sheet-url'); if(su) su.value=j.sheetUrl;
+      window.open(j.sheetUrl,'_blank');
+    } else { toast('Não foi possível obter a URL — reimplante o Apps Script (versão V1.1).'); }
+  }catch(e){ toast('Falha ao detectar — verifique a URL do Apps Script.'); }
+}
 function renderSyncSt(){const el=document.getElementById('sync-status');if(!el)return;const cnt=pend.length,on=navigator.onLine;el.innerHTML=`<div style="display:flex;align-items:center;gap:9px;padding:10px;background:var(--bg3);border-radius:var(--rs)"><div style="width:9px;height:9px;border-radius:50%;background:${on?'var(--eme)':'var(--rose)'}"></div><div><div style="font-size:13px;font-weight:600">${on?'Online':'Sem internet'}</div><div style="font-size:11px;color:var(--txt3);margin-top:1px">${cnt>0?cnt+' pendente(s)':'Tudo sincronizado ✓'}</div></div></div>${cfg.shUrl?`<div style="font-size:11px;color:var(--eme);padding:6px 10px;background:rgba(16,185,129,.1);border-radius:var(--rs);margin-top:7px">✓ Script configurado</div>`:'<div style="font-size:12px;color:var(--amb);padding:8px 10px;background:rgba(245,158,11,.1);border-radius:var(--rs);margin-top:7px">Configure a URL abaixo.</div>'}`}
 function renderPend(){const el=document.getElementById('pend-list');if(!el)return;const pd=desps.filter(d=>pend.includes(d.id));const pc=document.getElementById('pend-card');if(pc)pc.style.display=pd.length?'block':'none';el.innerHTML=pd.map(d=>`<div class="item"><div class="im"><div class="in">${d.desc}</div><div class="is">${fmtD(d.data)} · ${fmt(d.valor)}</div></div><span class="bdg pe">pendente</span></div>`).join('')}
 
@@ -2803,6 +2835,9 @@ function updateSyncHero() {
 function _bootApp() {
   applyTheme(); applySB(); renderAll();
   updateSyncHero(); renderCfg();
+  // Garantir banner oculto se já temos URL configurada
+  const _b=document.getElementById('first-run-banner');
+  if(_b && cfg.shUrl) _b.style.display='none';
   setTimeout(autoLoadOnOpen, 600);
   setTimeout(checkAutoBackup, 5000);
 }
@@ -2888,7 +2923,9 @@ async function firstRunLoad() {
 const _showFirstRunBannerOrig = showFirstRunBanner;
 showFirstRunBanner = function() {
   const banner = document.getElementById('first-run-banner');
-  if (banner && !cfg.shUrl) banner.style.display = 'block';
+  if (!banner) return;
+  if (cfg.shUrl) { banner.style.display = 'none'; return; }
+  banner.style.display = 'block';
 };
 
 // ── Ao abrir Planilha/Sync, sempre atualizar hero e banner ───
@@ -3233,14 +3270,34 @@ function onCart(){
 // Editar pagamento
 function editPag(id){
   const p=pags.find(x=>x.id===id); if(!p) return;
-  const novoNome=prompt('Nome do pagamento:',p.nome);
-  if(novoNome===null) return;
-  const t=p.tipo;
-  const novoTipo=prompt('Tipo (credit/debit/pix/dinheiro/outro):',t);
-  if(novoTipo===null) return;
-  p.nome=novoNome.trim()||p.nome;
-  p.tipo=novoTipo.trim()||p.tipo;
-  saveAll(); if(typeof renderPags==='function')renderPags();
+  openModal('Editar pagamento','',null);
+  document.getElementById('m-btns').style.display='none';
+  document.getElementById('m-extra').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="edit-row"><label>Nome</label><input id="ep-n" value="${p.nome}" style="flex:1"/></div>
+      <div class="edit-row"><label>Tipo</label>
+        <select id="ep-t" style="flex:1">
+          <option value="credit"${p.tipo==='credit'?' selected':''}>Crédito</option>
+          <option value="debit"${p.tipo==='debit'?' selected':''}>Débito</option>
+          <option value="pix"${p.tipo==='pix'?' selected':''}>Pix</option>
+          <option value="dinheiro"${p.tipo==='dinheiro'?' selected':''}>Dinheiro</option>
+          <option value="outro"${!['credit','debit','pix','dinheiro'].includes(p.tipo)?' selected':''}>Outro</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:7px;margin-top:4px">
+        <button class="btn pr sm" style="flex:1" onclick="savePagEdit('${id}')">Salvar</button>
+        <button class="btn sm" style="flex:1" onclick="closeModal()">Cancelar</button>
+      </div>
+    </div>`;
+}
+function savePagEdit(id){
+  const p=pags.find(x=>x.id===id); if(!p) return;
+  p.nome=(document.getElementById('ep-n').value||'').trim()||p.nome;
+  p.tipo=document.getElementById('ep-t').value||p.tipo;
+  saveAll(); closeModal();
+  if(typeof renderPags==='function') renderPags();
+  if(typeof renderCfgPags==='function') renderCfgPags();
+  if(typeof populateForm==='function') populateForm();
   toast('Pagamento atualizado!');
 }
 

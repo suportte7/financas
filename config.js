@@ -1,2 +1,15 @@
-// ATENÇÃO: Cole sua URL do Apps Script aqui para que ela persista no GitHub
-const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHGOx9ndx1pIb9SfthSE7_nPsJ9V__Yi3O4hKCgpntHxC-80SU1QO1CmV9e8jmQaJXuw/exec';
+// ═══════════════════════════════════════════════════════
+//  FINANÇAS PESSOAIS — Configuração do Apps Script
+//  
+//  ► Cole a URL do seu Apps Script aqui (uma vez só):
+// ═══════════════════════════════════════════════════════
+
+const APP_SCRIPT_URL = '';
+
+//  Como obter a URL:
+//  1. Abra sua planilha no Google Sheets
+//  2. Extensões → Apps Script
+//  3. Implantar → Gerenciar implantações
+//  4. Copie a URL do Web App
+//  5. Cole entre as aspas acima e salve este arquivo
+// ═══════════════════════════════════════════════════════

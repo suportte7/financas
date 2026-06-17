@@ -1,8 +1,8 @@
 // FINANÇAS PESSOAIS V2
 
-const APP_VER = 'V1.8';
-const VERSAO_ATUAL = '1.8';
-const APP_VERSION = '1.8';
+const APP_VER = 'V1.9';
+const VERSAO_ATUAL = '1.9';
+const APP_VERSION = '1.9';
 // FINANÇAS V2 — app.js
 const K=k=>'fin6_'+k,gl=k=>{try{const v=localStorage.getItem(K(k));return v?JSON.parse(v):null}catch{return null}},gs=(k,v)=>localStorage.setItem(K(k),JSON.stringify(v));
 let cats=gl('cats')||[];
@@ -164,6 +164,9 @@ function chkPin(){
     // Esconde lock, mostra shell
     document.getElementById('lock').classList.remove('show');
     document.getElementById('shell').style.display='';
+    // Reverte o overflow:auto que lockApp() define (iOS fix) — sem isso,
+    // o body fica com scroll duplicado e a rolagem do mouse/touch
+    // dentro de páginas como Importação para de funcionar corretamente.
     document.body.style.overflow='hidden';
     pinBuf=''; updDots();
     document.getElementById('pin-err').textContent='';

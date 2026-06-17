@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
+<meta name="theme-color" content="#6366f1" id="meta-theme"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Finanças V2"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icons/icon-192.png"/>
+<title>Finanças Pessoais v1.8</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap');
+
+/* ── THEMES ──────────────────────────────────────────────── */
+:root{
+  --bg:#111827;--bg2:#1f2937;--bg3:#273344;--bg4:#374151;
+  --txt:#f9fafb;--txt2:#9ca3af;--txt3:#6b7280;
+  --ind:#6366f1;--ind2:#818cf8;--ind3:#4f46e5;--vio:#8b5cf6;
+  --rose:#f43f5e;--amb:#f59e0b;--eme:#10b981;--sky:#0ea5e9;--teal:#14b8a6;
+  --bdr:rgba(255,255,255,.06);--bdr2:rgba(255,255,255,.12);
+  --r:16px;--rs:10px;--rx:6px;
+  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
+  --app-height:100dvh;
+  --accent:#6366f1;--accent2:#818cf8;
+}
+[data-theme="light"]{--bg:#f0f4ff;--bg2:#fff;--bg3:#e8edf7;--bg4:#d1d9ef;--txt:#0f172a;--txt2:#475569;--txt3:#94a3b8;--bdr:rgba(0,0,0,.07);--bdr2:rgba(0,0,0,.13);--accent:#6366f1;--accent2:#4f46e5}
+[data-theme="ocean"]{--bg:#020c1b;--bg2:#0a1929;--bg3:#112240;--bg4:#1a3a5c;--accent:#0ea5e9;--accent2:#38bdf8;--ind:#0ea5e9;--ind2:#38bdf8;--ind3:#0284c7}
+[data-theme="forest"]{--bg:#071a0e;--bg2:#0d2b18;--bg3:#153d24;--bg4:#1f5230;--accent:#10b981;--accent2:#34d399;--ind:#10b981;--ind2:#34d399;--ind3:#059669}
+[data-theme="sunset"]{--bg:#1a0810;--bg2:#2d1020;--bg3:#401830;--bg4:#521f40;--accent:#f43f5e;--accent2:#fb7185;--ind:#f43f5e;--ind2:#fb7185;--ind3:#e11d48}
+/* ── TEMAS SUAVES NOVOS ──────────────────────────────────────── */
+[data-theme="latte"]{
+  --bg:#fdf6f0;--bg2:#fff;--bg3:#f5ebe0;--bg4:#ede0d4;
+  --txt:#3d2b1f;--txt2:#7c6350;--txt3:#a89080;
+  --bdr:rgba(0,0,0,.07);--bdr2:rgba(0,0,0,.13);
+  --accent:#c17c4a;--accent2:#a0522d;
+  --ind:#c17c4a;--ind2:#d4956b;--ind3:#a0522d;
+  --rose:#e05c5c;--amb:#d4a017;--eme:#4a9b6f;
+}
+[data-theme="lavender"]{
+  --bg:#f5f0ff;--bg2:#fff;--bg3:#ede8ff;--bg4:#ddd6fe;
+  --txt:#2e1a6b;--txt2:#6d5fa0;--txt3:#9b8ec4;
+  --bdr:rgba(0,0,0,.06);--bdr2:rgba(0,0,0,.11);
+  --accent:#7c3aed;--accent2:#6d28d9;
+  --ind:#7c3aed;--ind2:#a78bfa;--ind3:#6d28d9;
+  --rose:#e63a6c;--amb:#d97706;--eme:#059669;
+}
+[data-theme="mint"]{
+  --bg:#f0fdf8;--bg2:#fff;--bg3:#e0faf0;--bg4:#c8f0e0;
+  --txt:#0f3d2b;--txt2:#3d7060;--txt3:#6ba896;
+  --bdr:rgba(0,0,0,.06);--bdr2:rgba(0,0,0,.11);
+  --accent:#0d9488;--accent2:#0f766e;
+  --ind:#0d9488;--ind2:#2dd4bf;--ind3:#0f766e;
+  --rose:#e11d48;--amb:#d97706;--eme:#059669;
+}
+[data-theme="dusk"]{
+  --bg:#1a1625;--bg2:#231e33;--bg3:#2e2844;--bg4:#3a3356;
+  --txt:#e8e0ff;--txt2:#a89ec8;--txt3:#7a7098;
+  --bdr:rgba(255,255,255,.06);--bdr2:rgba(255,255,255,.12);
+  --accent:#a78bfa;--accent2:#c4b5fd;
+  --ind:#a78bfa;--ind2:#c4b5fd;--ind3:#7c3aed;
+  --rose:#f87171;--amb:#fbbf24;--eme:#34d399;
+}
+[data-theme="sand"]{
+  --bg:#faf7f0;--bg2:#fff;--bg3:#f2ece0;--bg4:#e8dfc8;
+  --txt:#2c2416;--txt2:#6b5c40;--txt3:#a08c6a;
+  --bdr:rgba(0,0,0,.07);--bdr2:rgba(0,0,0,.13);
+  --accent:#b08040;--accent2:#8c6020;
+  --ind:#b08040;--ind2:#d4a85a;--ind3:#8c6020;
+  --rose:#c0392b;--amb:#d4961a;--eme:#27ae60;
+}
+[data-theme="slate"]{
+  --bg:#0f1419;--bg2:#1a2230;--bg3:#222e40;--bg4:#2c3a50;
+  --txt:#e2eaf5;--txt2:#8fa4be;--txt3:#607090;
+  --bdr:rgba(255,255,255,.06);--bdr2:rgba(255,255,255,.11);
+  --accent:#4a9eca;--accent2:#7bbee0;
+  --ind:#4a9eca;--ind2:#7bbee0;--ind3:#2980b9;
+  --rose:#e74c6c;--amb:#f0a500;--eme:#2ecc71;
+}
+
+
+/* ── RESET & BASE ──────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:99px}
+::-webkit-scrollbar-track{background:transparent}
+html{height:var(--app-height);min-height:var(--app-height);max-height:var(--app-height)}
+body{
+  position:fixed;inset:0;width:100%;
+  height:var(--app-height);min-height:var(--app-height);max-height:var(--app-height);
+  overflow:hidden;
+  font-family:'DM Sans',ui-rounded,-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+  background:var(--bg);color:var(--txt);font-size:14px;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  letter-spacing:-.01em;
+}
+
+/* ── SHELL ─────────────────────────────────────────────────── */
+.shell{display:flex;width:100%;width:100vw;height:var(--app-height);max-height:var(--app-height);padding-top:var(--st);overflow:hidden;position:relative}
+
+/* ── SIDEBAR ──────────────────────────────────────────────── */
+.sb{
+  width:224px;flex-shrink:0;
+  background:var(--bg2);
+  border-right:1px solid var(--bdr);
+  display:flex;flex-direction:column;
+  min-height:0;overflow:hidden;
+  transition:width .28s cubic-bezier(.4,0,.2,1);
+}
+.sb.col{width:56px}
+
+@media(max-width:640px){
+  /* Sidebar mobile — sobrepõe o conteúdo, não empurra */
+  .sb{
+    position:fixed;top:0;left:0;
+    height:100%;height:var(--app-height);
+    z-index:300;
+    width:min(280px,85vw);max-width:none;
+    overflow-y:auto;overflow-x:hidden;
+    padding-top:var(--st);
+    transform:translateX(-110%);
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    box-shadow:none;flex-shrink:0;display:flex !important;flex-direction:column;
+  }
+  .sb.open{
+    width:272px;max-width:272px;overflow:visible;
+    transform:translateX(0);
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    box-shadow:20px 0 60px rgba(0,0,0,.5);
+  }
+  .sb.col{width:0;max-width:0}
+  .shell{width:100vw;max-width:100vw;overflow:hidden}
+  .main{flex:1;min-width:0;width:100%;max-width:100vw}
+  .cnt{width:100%;box-sizing:border-box;max-width:100vw;overflow-x:hidden}
+}
+
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:198;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);-webkit-tap-highlight-color:transparent;transition:opacity .25s}
+.ov.on{display:block}
+.main{flex:1;min-width:0;width:0;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.cnt{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:16px 16px calc(20px + var(--sb));max-width:100vw}
+.global-filter-inline{display:none;border-bottom:1px solid var(--bdr);background:var(--bg);box-shadow:0 12px 32px rgba(0,0,0,.2);max-height:42vh;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-shrink:0}
+@media(max-width:640px){.global-filter-inline{max-height:48vh}}
+
+/* ── SIDEBAR INNER ────────────────────────────────────────── */
+.sbh{padding:18px 13px 13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bdr);flex-shrink:0}
+.sb.col .sbh{justify-content:center}
+.sbav{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0;cursor:pointer}
+.sbav-init{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--vio));
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#fff;flex-shrink:0;cursor:pointer;
+  box-shadow:0 2px 10px rgba(99,102,241,.4);
+}
+.sbi{flex:1;min-width:0;overflow:hidden;cursor:pointer}
+.sbi-n{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.02em}
+.sbi-m{font-size:10px;color:var(--txt3);margin-top:1px;font-weight:500}
+.sbtog{background:none;border:none;cursor:pointer;color:var(--txt3);padding:4px;border-radius:8px;display:flex;flex-shrink:0;transition:color .2s,background .2s}
+.sbtog:hover{color:var(--txt);background:var(--bg3)}
+.sbtog svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.sbscr{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:8px 0 6px;min-height:0}
+.sbsec{padding:12px 16px 4px;font-size:9px;font-weight:700;color:var(--txt3);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;overflow:hidden}
+.sbtn{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;margin:1px 8px;
+  border-radius:12px;cursor:pointer;
+  color:var(--txt2);border:none;background:none;
+  font-size:12px;font-weight:500;
+  width:calc(100% - 16px);text-align:left;white-space:nowrap;
+  transition:background .18s,color .18s;
+  font-family:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.sbtn:hover{background:var(--bg3);color:var(--txt)}
+.sbtn.act{
+  background:rgba(99,102,241,.15);
+  color:var(--accent2);font-weight:700;
+  box-shadow:inset 0 0 0 1px rgba(99,102,241,.2);
+}
+.sbtn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0;transition:stroke .18s}
+.sbtn .lbl{flex:1;overflow:hidden}
+.sbtn .bdgn{background:var(--accent);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;flex-shrink:0}
+.sb.col .sbsec,.sb.col .lbl,.sb.col .bdgn,.sb.col .sbi{display:none}
+.sb.col .sbtn{padding:9px;justify-content:center;margin:1px 6px;width:calc(100% - 12px)}
+.sbot{border-top:1px solid var(--bdr);padding:6px 0;flex-shrink:0}
+.sync-row{display:flex;align-items:center;gap:6px;padding:7px 14px;font-size:10px;color:var(--txt3);font-weight:500}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.don{background:var(--eme)}.doff{background:var(--rose)}.dsyn{background:var(--amb);animation:bl 1s infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+.sb.col .sync-row span,.sb.col .sync-row button{display:none}
+
+/* ── TOPBAR ──────────────────────────────────────────────── */
+.topbar{
+  display:flex;align-items:center;gap:8px;padding:11px 14px;
+  border-bottom:1px solid var(--bdr);
+  background:rgba(var(--bg-raw,17,24,39),.8);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  flex-shrink:0;
+}
+.mbtn{background:none;border:none;cursor:pointer;color:var(--txt2);padding:6px;border-radius:9px;display:none;flex-shrink:0;transition:color .2s,background .2s}
+.mbtn:hover{color:var(--txt);background:var(--bg3)}
+@media(max-width:640px){.mbtn{display:flex}}
+.mbtn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2}
+.topbar h1{font-size:16px;font-weight:800;flex:1;letter-spacing:-.4px}
+.mes-sel{
+  background:var(--bg3);border:1px solid var(--bdr2);
+  border-radius:12px;padding:7px 26px 7px 10px;
+  font-size:12px;color:var(--txt);-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7280' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;
+  font-family:inherit;font-weight:600;transition:border-color .2s;
+}
+.mes-sel:focus{outline:none;border-color:var(--accent)}
+.add-btn{
+  background:linear-gradient(135deg,var(--accent),var(--vio));
+  color:#fff;border:none;border-radius:12px;
+  padding:8px 14px;font-size:12px;font-weight:700;
+  cursor:pointer;white-space:nowrap;flex-shrink:0;
+  box-shadow:0 2px 14px rgba(99,102,241,.4);
+  transition:transform .15s,box-shadow .15s;
+}
+.add-btn:active{transform:scale(.96);box-shadow:0 1px 6px rgba(99,102,241,.3)}
+.icon-btn{
+  background:none;border:1px solid var(--bdr2);
+  border-radius:10px;padding:7px 10px;
+  cursor:pointer;color:var(--txt2);font-size:15px;flex-shrink:0;
+  transition:all .18s;
+}
+.icon-btn:hover{background:var(--bg3);color:var(--txt);border-color:var(--bdr2)}
+
+/* ── BANNERS ─────────────────────────────────────────────── */
+.bnr{display:none;align-items:center;gap:8px;padding:9px 14px;font-size:12px;flex-shrink:0;font-weight:500}
+.bnr.on{display:flex}
+.bnr.inst{background:linear-gradient(90deg,rgba(99,102,241,.14),rgba(139,92,246,.08));color:#c7d2fe;border-bottom:1px solid rgba(99,102,241,.18)}
+.bnr.sync{background:linear-gradient(90deg,rgba(245,158,11,.12),rgba(245,158,11,.05));color:#fcd34d;border-bottom:1px solid rgba(245,158,11,.18)}
+.bnr button{margin-left:auto;border:none;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s}
+.bnr button:active{opacity:.8}
+.bnr.inst button{background:var(--accent);color:#fff}
+.bnr.sync button{background:var(--amb);color:#000}
+.bnr .bc{background:none;color:var(--txt3);padding:2px 7px;font-size:16px;line-height:1;margin-left:2px}
+
+/* ── PAGES ───────────────────────────────────────────────── */
+.page{display:none}.page.on{display:block}
+
+/* ── HERO ────────────────────────────────────────────────── */
+.hero{
+  background:linear-gradient(135deg,rgba(99,102,241,.22),rgba(139,92,246,.12));
+  border:1px solid rgba(99,102,241,.25);
+  border-radius:20px;padding:22px 20px 18px;
+  margin-bottom:14px;position:relative;overflow:hidden;
+  box-shadow:0 4px 32px rgba(99,102,241,.12),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.hero::before{content:'';position:absolute;top:-50px;right:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.18),transparent 70%)}
+.hero::after{content:'';position:absolute;bottom:-30px;left:10px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,.12),transparent 70%)}
+.hl{font-size:10px;font-weight:700;color:rgba(165,180,252,.65);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+.hv{font-size:36px;font-weight:800;color:#fff;line-height:1.05;letter-spacing:-1px}
+.hs{font-size:12px;color:rgba(165,180,252,.55);margin-top:6px;font-weight:500}
+.hero-row{display:flex;gap:8px;margin-top:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}.hero-row::-webkit-scrollbar{display:none}
+.hero-pill{flex-shrink:0;min-width:100px;
+  flex:1;background:rgba(0,0,0,.22);
+  border-radius:12px;padding:10px 12px;
+  border:1px solid rgba(255,255,255,.07);
+  backdrop-filter:blur(10px);
+  transition:background .2s;
+}
+.hero-pill .pl{font-size:9px;color:rgba(255,255,255,.45);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.hero-pill .pv{font-size:14px;font-weight:800;color:#fff;letter-spacing:-.3px}
+
+/* ── METRICS ─────────────────────────────────────────────── */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.mc{
+  background:var(--bg2);border:1px solid var(--bdr);
+  border-radius:18px;padding:14px 15px;position:relative;overflow:hidden;
+  box-shadow:0 1px 4px rgba(0,0,0,.12);
+  transition:transform .2s,box-shadow .2s;
+}
+.mc:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.18)}
+.mc::before{content:'';position:absolute;top:0;left:0;width:3px;bottom:0;border-radius:18px 0 0 18px}
+.mc.r::before{background:var(--rose)}.mc.b::before{background:var(--accent)}.mc.a::before{background:var(--amb)}.mc.g::before{background:var(--eme)}
+.mc .ml{font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.mc .mv{font-size:19px;font-weight:800;letter-spacing:-.4px}
+.mc .mv.r{color:var(--rose)}.mc .mv.b{color:var(--accent2)}.mc .mv.a{color:var(--amb)}.mc .mv.g{color:var(--eme)}
+
+/* ── CARDS ───────────────────────────────────────────────── */
+.card{
+  background:var(--bg2);border:1px solid var(--bdr);
+  border-radius:20px;padding:16px;margin-bottom:12px;
+  box-shadow:0 1px 3px rgba(0,0,0,.1);
+  transition:box-shadow .2s;
+}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.ct{font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.09em}
+
+/* ── TRANSACTION ITEMS ───────────────────────────────────── */
+.item{display:flex;align-items:center;gap:13px;padding:12px 0;border-bottom:1px solid var(--bdr)}
+.item:last-child{border-bottom:none;padding-bottom:0}
+.item-icon{
+  width:46px;height:46px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;position:relative;
+  box-shadow:0 2px 10px rgba(0,0,0,.25);
+}
+.item-icon .sync-badge{position:absolute;bottom:-1px;right:-1px;width:16px;height:16px;border-radius:50%;border:2px solid var(--bg2);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700}
+.item-icon .sync-badge.p{background:var(--amb)}
+.item-icon .sync-badge.s{background:var(--eme)}
+.item .im{flex:1;min-width:0}
+.item .in{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.25px}
+.item .is{font-size:12px;color:var(--txt2);margin-top:3px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-weight:400}
+.item .ia{font-size:16px;font-weight:800;color:var(--rose);white-space:nowrap;flex-shrink:0;letter-spacing:-.4px}
+.item .idate{font-size:11px;color:var(--txt3);text-align:right;margin-top:3px;flex-shrink:0;font-weight:500}
+.item-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.item-acts{display:flex;gap:4px}
+
+/* ── BADGES ──────────────────────────────────────────────── */
+.bdg{display:inline-flex;align-items:center;font-size:10px;padding:3px 8px;border-radius:20px;font-weight:700;white-space:nowrap;letter-spacing:.01em}
+.bdg.cr{background:rgba(99,102,241,.18);color:#a5b4fc}
+.bdg.db{background:rgba(20,184,166,.18);color:#5eead4}
+.bdg.px{background:rgba(245,158,11,.18);color:#fcd34d}
+.bdg.dn{background:rgba(16,185,129,.18);color:#6ee7b7}
+.bdg.ct{background:rgba(139,92,246,.18);color:#c4b5fd}
+.bdg.pe{background:rgba(245,158,11,.18);color:#fcd34d}
+.bdg.sy{background:rgba(16,185,129,.18);color:#6ee7b7}
+.bdg.pa{background:rgba(14,165,233,.18);color:#7dd3fc;font-weight:700}
+
+/* ── FORMS ───────────────────────────────────────────────── */
+.frow{display:flex;gap:9px;margin-bottom:10px;align-items:flex-end;flex-wrap:wrap}
+.fg{display:flex;flex-direction:column;gap:5px;flex:1;min-width:80px}
+.fg label{font-size:11px;font-weight:600;color:var(--txt2);letter-spacing:.02em}
+.fg input,.fg select,.fg textarea{
+  background:var(--bg3);border:1px solid var(--bdr2);
+  border-radius:12px;padding:11px 12px;
+  font-size:14px;color:var(--txt);width:100%;-webkit-appearance:none;
+  font-family:inherit;transition:border-color .2s,box-shadow .2s;
+}
+.fg input:focus,.fg select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,.14)}
+.fg select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7280' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center;padding-right:30px;
+}
+.fg input[type=color]{padding:4px;height:44px;cursor:pointer;border-radius:12px}
+.fg input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--txt3)}
+textarea{resize:none}
+
+/* ── BUTTONS ─────────────────────────────────────────────── */
+.btn{
+  padding:10px 16px;border-radius:12px;
+  font-size:13px;font-weight:600;cursor:pointer;
+  border:1px solid var(--bdr2);
+  background:var(--bg3);color:var(--txt);
+  font-family:inherit;
+  transition:all .18s cubic-bezier(.4,0,.2,1);
+  display:inline-flex;align-items:center;gap:6px;
+}
+.btn:hover{background:var(--bg4);border-color:var(--bdr2)}
+.btn:active{opacity:.75;transform:scale(.96)}
+.btn.pr{
+  background:linear-gradient(135deg,var(--accent),var(--vio));
+  color:#fff;border:none;
+  box-shadow:0 2px 14px rgba(99,102,241,.35);
+}
+.btn.pr:hover{box-shadow:0 4px 20px rgba(99,102,241,.45);filter:brightness(1.07)}
+.btn.dn{color:var(--rose);border-color:rgba(244,63,94,.25);background:transparent}
+.btn.dn:hover{background:rgba(244,63,94,.08)}
+.btn.dn:active{background:rgba(244,63,94,.14)}
+.btn.sm{padding:7px 12px;font-size:11px;border-radius:10px}
+.btn.xs{padding:4px 9px;font-size:10px;font-weight:600;border-radius:8px}
+.btn.fl{width:100%;justify-content:center;padding:14px}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+.btn:disabled{opacity:.5;pointer-events:none;cursor:not-allowed}
+
+/* ── PROGRESS ────────────────────────────────────────────── */
+.prog{background:var(--bg4);border-radius:99px;height:5px;overflow:hidden;flex:1}
+.pf{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+
+/* ── FILTERS ─────────────────────────────────────────────── */
+.flt{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}
+.flt select,.flt input{
+  background:var(--bg2);border:1px solid var(--bdr2);
+  border-radius:12px;padding:8px 11px;
+  font-size:12px;color:var(--txt);-webkit-appearance:none;font-family:inherit;
+  transition:border-color .2s;
+}
+.flt select:focus,.flt input:focus{outline:none;border-color:var(--accent)}
+.flt select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7280' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 9px center;padding-right:26px;
+}
+.drange{display:flex;gap:7px;align-items:center;margin-bottom:11px;flex-wrap:wrap}
+.drange input[type=date]{
+  background:var(--bg2);border:1px solid var(--bdr2);
+  border-radius:12px;padding:8px 10px;
+  font-size:12px;color:var(--txt);font-family:inherit;-webkit-appearance:none;
+}
+.period-btn{
+  padding:7px 11px;border-radius:10px;
+  font-size:11px;border:1px solid var(--bdr2);
+  background:var(--bg2);color:var(--txt2);
+  cursor:pointer;font-family:inherit;transition:all .18s;font-weight:600;
+}
+.period-btn.act{background:rgba(99,102,241,.18);color:var(--accent2);border-color:rgba(99,102,241,.35)}
+
+/* ── TOGGLE ──────────────────────────────────────────────── */
+.trow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--bdr)}
+.trow:last-child{border-bottom:none}
+.ti{flex:1}.ti .t1{font-size:13px;font-weight:600}.ti .t2{font-size:11px;color:var(--txt3);margin-top:2px;font-weight:400}
+.tgl{position:relative;width:42px;height:25px;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0;position:absolute}
+.ts{position:absolute;inset:0;background:var(--bg4);border-radius:99px;cursor:pointer;transition:background .22s}
+.tgl input:checked+.ts{background:var(--accent)}
+.ts::before{content:'';position:absolute;width:20px;height:20px;left:2.5px;top:2.5px;background:white;border-radius:50%;transition:transform .22s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.tgl input:checked+.ts::before{transform:translateX(17px)}
+
+/* ── TABS ────────────────────────────────────────────────── */
+.tabs{display:flex;border-bottom:1px solid var(--bdr);margin-bottom:14px;gap:0}
+.tab{
+  flex:1;padding:10px 8px;text-align:center;
+  font-size:12px;font-weight:600;border:none;background:none;
+  color:var(--txt3);cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+  font-family:inherit;transition:color .18s,border-color .18s;
+  letter-spacing:.01em;
+}
+.tab.act{color:var(--accent2);border-bottom-color:var(--accent)}
+
+/* ── CALENDAR ────────────────────────────────────────────── */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.cal-nav button{
+  background:var(--bg3);border:1px solid var(--bdr2);
+  border-radius:12px;padding:7px 13px;
+  color:var(--txt);cursor:pointer;font-size:13px;font-family:inherit;font-weight:700;
+  transition:background .18s;
+}
+.cal-nav button:hover{background:var(--bg4)}
+.cal-nav .cal-title{font-size:15px;font-weight:800;letter-spacing:-.3px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-dow{text-align:center;font-size:9px;font-weight:700;color:var(--txt3);padding:2px 0 6px;letter-spacing:.02em}
+.cal-day{min-height:44px;border-radius:8px;padding:4px 2px 3px;cursor:pointer;transition:background .15s;display:flex;flex-direction:column;align-items:center;overflow:hidden}
+.cal-day:hover{background:var(--bg3)}
+.cal-day:active{background:var(--bg4)}
+.cal-day.today{background:rgba(99,102,241,.18);border:1px solid rgba(99,102,241,.4)}
+.cal-day.today .cal-num{color:var(--accent2);font-weight:800}
+.cal-day.sel{background:rgba(99,102,241,.28);border:1px solid var(--accent)}
+.cal-day.other{opacity:.22}
+.cal-day.fut .cal-num{color:var(--txt3)}
+.cal-num{font-size:12px;font-weight:500;color:var(--txt);line-height:1.2}
+.cal-dots{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;margin-top:2px;max-width:28px}
+.cal-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0}
+.cal-day-val{font-size:8px;color:var(--rose);font-weight:700;line-height:1;margin-top:1px;white-space:nowrap}
+@media(max-width:380px){.cal-day{min-height:38px;padding:3px 1px}.cal-num{font-size:11px}.cal-dow{font-size:8px}.cal-dot{width:3px;height:3px}}
+.cal-detail{background:var(--bg2);border:1px solid var(--bdr);border-radius:18px;padding:14px 15px;margin-top:11px}
+.cdh{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.cdt{font-size:14px;font-weight:800;letter-spacing:-.2px}
+.cda{font-size:15px;font-weight:800;color:var(--rose)}
+
+/* ── PARCELAS ────────────────────────────────────────────── */
+.parc-item{background:var(--bg2);border:1px solid var(--bdr);border-radius:18px;margin-bottom:10px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.parc-item.expanded{border-color:rgba(99,102,241,.35);box-shadow:0 4px 20px rgba(99,102,241,.1)}
+.parc-header{display:flex;align-items:center;gap:12px;padding:14px 15px;cursor:pointer;transition:background .15s}
+.parc-header:hover{background:rgba(255,255,255,.03)}
+.parc-icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.parc-info{flex:1;min-width:0}
+.parc-desc{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.25px}
+.parc-sub{display:flex;align-items:center;gap:9px;margin-top:4px}
+.parc-prog-wrap{flex:1;max-width:90px}
+.parc-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0}
+.parc-total{font-size:15px;font-weight:800;color:var(--accent2)}
+.parc-remaining{font-size:11px;color:var(--txt3);font-weight:500}
+.parc-chevron{width:26px;height:26px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--txt2);flex-shrink:0;transition:transform .25s cubic-bezier(.4,0,.2,1),background .2s}
+.parc-item.expanded .parc-chevron{transform:rotate(90deg);background:rgba(99,102,241,.2);color:var(--accent2)}
+.parc-body{display:none;border-top:1px solid var(--bdr);padding:11px 15px 14px}
+.parc-body.open{display:block}
+.parc-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bdr)}
+.parc-row:last-child{border-bottom:none;padding-bottom:0}
+.parc-row-left{display:flex;align-items:center;gap:9px}
+.parc-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.parc-num.paid{background:rgba(16,185,129,.18);color:var(--eme)}
+.parc-num.future{background:var(--bg4);color:var(--txt3)}
+.parc-num.current{background:rgba(99,102,241,.18);color:var(--accent2)}
+
+/* ── PARCELAS — cards redesenhados (renderParcs) ──────────── */
+.parc-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:16px;margin-bottom:10px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.parc-card.expanded{border-color:rgba(99,102,241,.35);box-shadow:0 4px 20px rgba(99,102,241,.1)}
+.parc-hdr{display:flex;align-items:center;gap:11px;padding:12px 14px;cursor:pointer;transition:background .15s}
+.parc-hdr:hover{background:rgba(255,255,255,.03)}
+.parc-cat-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;line-height:1}
+.parc-hdr-info{flex:1;min-width:0}
+.parc-hdr-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px}
+.parc-hdr-sub{display:flex;align-items:center;gap:8px;margin-top:5px;font-size:11px}
+.parc-hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;text-align:right}
+.parc-hdr-total{font-size:14px;font-weight:800;color:var(--accent2);white-space:nowrap}
+.parc-hdr-remain{font-size:10px;color:var(--txt3);font-weight:500;white-space:nowrap}
+.parc-chevron-icon{width:16px;height:16px;flex-shrink:0;stroke:var(--txt3);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s cubic-bezier(.4,0,.2,1)}
+.parc-card.expanded .parc-chevron-icon{transform:rotate(90deg);stroke:var(--accent2)}
+.parc-detail{display:none;border-top:1px solid var(--bdr);padding:2px 14px 10px}
+.parc-card.expanded .parc-detail{display:block}
+@media(max-width:380px){.parc-hdr{padding:10px 11px;gap:8px}.parc-cat-icon{width:36px;height:36px;font-size:17px}.parc-hdr-name{font-size:12px}.parc-hdr-total{font-size:13px}}
+
+/* ── ORÇAMENTO RINGS ─────────────────────────────────────── */
+.orc-ring-wrap{display:flex;gap:11px;align-items:center;flex-wrap:wrap;margin-bottom:14px;padding:4px 0}
+.orc-ring{position:relative;width:82px;height:82px;flex-shrink:0}
+.orc-ring svg{transform:rotate(-90deg)}
+.orc-ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2}
+.orc-ring-pct{font-size:16px;font-weight:800;letter-spacing:-.3px}
+.orc-ring-name{font-size:9px;color:var(--txt3);font-weight:700;text-align:center;max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px}
+.orc-list-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)}
+.orc-list-item:last-child{border-bottom:none}
+
+/* ── MODAL ───────────────────────────────────────────────── */
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:opacity .2s}
+.mov.on{display:flex;align-items:flex-end}
+@media(min-width:641px){.mov.on{align-items:center}}
+.modal{
+  background:var(--bg2);border-radius:24px 24px 0 0;
+  width:100%;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:8px 18px calc(18px + var(--sb));position:relative;
+  transition:transform .25s cubic-bezier(.4,0,.2,1);
+  border:1px solid var(--bdr);
+  box-shadow:0 -20px 60px rgba(0,0,0,.4);
+}
+@media(min-width:641px){.modal{border-radius:22px;max-width:480px;margin:auto;padding:22px;max-height:85vh;box-shadow:0 24px 80px rgba(0,0,0,.5)}}
+.mhnd{width:40px;height:4px;background:var(--bg4);border-radius:99px;margin:0 auto 16px;cursor:grab}
+.modal h3{font-size:18px;font-weight:800;margin-bottom:14px;letter-spacing:-.4px}
+.mbtns{display:flex;gap:9px;margin-top:14px}
+.mbtns button{flex:1}
+.modal.draggable{border-radius:20px !important;max-height:80vh;cursor:default;user-select:none;-webkit-user-select:none}
+.modal.draggable .mhnd{cursor:grab;background:var(--bg3)}
+.modal.draggable .mhnd:active{cursor:grabbing}
+
+/* ── LOCK SCREEN ─────────────────────────────────────────── */
+#lock{
+  position:fixed;inset:0;width:100%;height:100%;min-height:100%;
+  background:var(--bg);z-index:9999;
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px 24px max(28px,env(safe-area-inset-bottom));
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  touch-action:manipulation;pointer-events:all;
+}
+#lock.show{display:flex;}
+.lk-avatar-wrap{margin-bottom:20px}
+.lk-avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);box-shadow:0 0 0 6px rgba(99,102,241,.15)}
+.lk-avatar-init{
+  width:80px;height:80px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--vio));
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;font-weight:700;color:#fff;
+  border:3px solid var(--accent);
+  box-shadow:0 0 0 6px rgba(99,102,241,.15),0 8px 32px rgba(99,102,241,.3);
+}
+.lk-title{font-size:28px;font-weight:800;margin-bottom:4px;letter-spacing:-.6px}
+.lk-sub{font-size:13px;color:var(--txt2);margin-bottom:30px;font-weight:500}
+.pin-dots{display:flex;gap:18px;margin-bottom:28px}
+.pd{width:14px;height:14px;border-radius:50%;border:2px solid var(--txt3);transition:all .18s cubic-bezier(.34,1.56,.64,1)}
+.pd.on{background:var(--accent);border-color:var(--accent);transform:scale(1.2);box-shadow:0 0 12px rgba(99,102,241,.5)}
+.pd.err{background:var(--rose);border-color:var(--rose);animation:shake .35s cubic-bezier(.36,.07,.19,.97)}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.pin-err{color:var(--rose);font-size:12px;height:18px;margin-bottom:10px;font-weight:600;letter-spacing:.02em}
+.pin-grid{display:grid;grid-template-columns:repeat(3,78px);gap:11px}
+.pk{
+  height:74px;border-radius:18px;
+  background:var(--bg2);border:1px solid var(--bdr2);
+  color:var(--txt);font-size:24px;font-weight:500;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  transition:transform .1s,background .1s,box-shadow .1s;
+  font-family:inherit;position:relative;overflow:hidden;
+  -webkit-tap-highlight-color:transparent;user-select:none;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);pointer-events:all;
+}
+.pk::after{content:'';position:absolute;inset:0;background:var(--accent);opacity:0;transition:opacity .1s}
+.pk:active::after{opacity:.12}
+.pk:active{transform:scale(.92);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.pk .ks{font-size:8px;color:var(--txt3);letter-spacing:.07em;font-weight:500}
+.pk.del{font-size:15px;color:var(--txt2)}
+.pk.emp{background:transparent;border:none;pointer-events:none;box-shadow:none}
+.lk-change{margin-top:24px;background:none;border:none;color:var(--txt3);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:none;padding:4px 12px;border-radius:8px;transition:color .18s,background .18s;font-weight:500}
+.lk-change:hover{color:var(--txt2);background:var(--bg3)}
+
+/* ── ADVANCED TABLE ──────────────────────────────────────── */
+.adv-table-wrap{overflow:auto;-webkit-overflow-scrolling:touch;max-height:420px;border-radius:14px;border:1px solid var(--bdr)}
+.adv-table{width:100%;border-collapse:collapse;font-size:12px;min-width:500px}
+.adv-table th{padding:10px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;background:var(--bg3);border-bottom:1px solid var(--bdr);white-space:nowrap;cursor:pointer;user-select:none;-webkit-user-select:none;transition:background .15s}
+.adv-table th:hover{background:var(--bg4)}
+.adv-table th .sort-ico{margin-left:4px;opacity:.5;font-size:10px}
+.adv-table th.sorted .sort-ico{opacity:1;color:var(--accent2)}
+.adv-table td{padding:10px 11px;border-bottom:1px solid var(--bdr);color:var(--txt2);vertical-align:middle}
+.adv-table tr:last-child td{border-bottom:none}
+.adv-table tr:hover td{background:rgba(255,255,255,.02)}
+.adv-table td input{background:transparent;border:none;color:var(--txt);font-family:inherit;font-size:12px;width:100%;outline:none;padding:2px 4px;border-radius:5px}
+.adv-table td input:focus{background:var(--bg3);outline:1px solid var(--accent)}
+.col-toggle-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px}
+.col-toggle{padding:5px 11px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--bdr2);background:var(--bg3);color:var(--txt2);cursor:pointer;transition:all .18s}
+.col-toggle.on{background:rgba(99,102,241,.18);color:var(--accent2);border-color:rgba(99,102,241,.3)}
+
+/* ── THEME SWATCHES ──────────────────────────────────────── */
+.theme-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:11px 0}
+.theme-swatch{width:100%;aspect-ratio:1;border-radius:14px;cursor:pointer;border:2px solid transparent;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .18s;position:relative;overflow:hidden}
+.theme-swatch:active{transform:scale(.88)}
+.theme-swatch.sel{border-color:var(--accent2);box-shadow:0 0 0 2px var(--accent)}
+.theme-swatch .chk{position:absolute;bottom:3px;right:3px;font-size:10px;background:var(--accent);border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;display:none}
+.theme-swatch.sel .chk{display:flex}
+
+/* ── ACCOUNT CARD ────────────────────────────────────────── */
+.acc-card{display:flex;align-items:center;gap:11px;padding:12px 14px;background:var(--bg2);border:1px solid var(--bdr);border-radius:18px;margin-bottom:9px;cursor:pointer;transition:all .2s}
+.acc-card:hover{background:var(--bg3);border-color:var(--bdr2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.acc-icon{width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.acc-name{font-size:13px;font-weight:700;letter-spacing:-.15px}
+.acc-sub{font-size:11px;color:var(--txt2);margin-top:2px;font-weight:400}
+.acc-bal{font-size:16px;font-weight:800;letter-spacing:-.3px}
+
+/* ── CHIP / SWATCH ───────────────────────────────────────── */
+.swatch{width:10px;height:10px;border-radius:4px;flex-shrink:0;border:1px solid var(--bdr2)}
+.cchip{width:36px;height:25px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0}
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--txt3);font-size:13px;font-weight:500}
+.edit-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--bdr)}
+.edit-row:last-child{border-bottom:none}
+.edit-row label{font-size:11px;color:var(--txt2);width:90px;flex-shrink:0;font-weight:600}
+.edit-row input,.edit-row select{background:var(--bg3);border:1px solid var(--bdr2);border-radius:9px;padding:8px 10px;font-size:12px;color:var(--txt);font-family:inherit;-webkit-appearance:none;flex:1;transition:border-color .18s}
+.edit-row input:focus,.edit-row select:focus{outline:none;border-color:var(--accent)}
+.edit-row select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7280' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:24px}
+
+/* ── TOAST ───────────────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:calc(22px + var(--sb));left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:var(--bg3);color:var(--txt);
+  font-size:12px;font-weight:700;
+  padding:11px 22px;border-radius:99px;
+  white-space:nowrap;opacity:0;
+  transition:opacity .22s,transform .22s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;z-index:700;
+  border:1px solid var(--bdr2);
+  max-width:90vw;text-align:center;
+  box-shadow:0 6px 24px rgba(0,0,0,.35);
+  backdrop-filter:blur(10px);
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── BOTTOM NAV ──────────────────────────────────────────── */
+.bot-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;
+  height:calc(58px + var(--sb));
+  background:rgba(var(--bg2-raw,31,41,55),.85);
+  border-top:1px solid var(--bdr);z-index:190;
+  padding-bottom:var(--sb);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+}
+@media(max-width:640px){.bot-nav{display:flex}.cnt{padding-bottom:calc(74px + var(--sb))}}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:none;cursor:pointer;color:var(--txt3);font-size:10px;font-weight:600;font-family:inherit;padding:6px 0;transition:color .18s;-webkit-tap-highlight-color:transparent}
+.bnav-btn svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;transition:all .2s}
+.bnav-btn.act{color:var(--accent)}
+.bnav-btn.act svg{stroke:var(--accent);filter:drop-shadow(0 0 6px rgba(99,102,241,.5))}
+.bnav-btn .bnav-dot{width:4px;height:4px;border-radius:50%;background:var(--accent);opacity:0;transition:opacity .18s;margin-top:1px}
+.bnav-btn.act .bnav-dot{opacity:1}
+
+/* ── DRAG MODAL ──────────────────────────────────────────── */
+.drag-modal{position:fixed;z-index:600;background:var(--bg2);border:1px solid var(--bdr2);border-radius:22px;box-shadow:0 28px 70px rgba(0,0,0,.6);touch-action:manipulation;user-select:none;-webkit-user-select:none;min-width:300px;max-width:92vw}
+.drag-handle{padding:13px 17px 9px;display:flex;align-items:center;gap:9px;cursor:grab;border-radius:22px 22px 0 0}
+.drag-handle:active{cursor:grabbing}
+.drag-handle-bar{width:40px;height:4px;border-radius:99px;background:var(--bg4);margin:0 auto 9px;display:block}
+.drag-handle-title{font-size:15px;font-weight:800;flex:1;letter-spacing:-.3px}
+
+/* ── META BAR ────────────────────────────────────────────── */
+.meta-total-bar{background:var(--bg3);border-radius:14px;padding:13px 15px;margin-top:11px;border:1px solid var(--bdr)}
+
+/* ── MICRO-INTERACTIONS ──────────────────────────────────── */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.page.on > *{animation:fadeInUp .22s ease both}
+.page.on > *:nth-child(1){animation-delay:.02s}
+.page.on > *:nth-child(2){animation-delay:.05s}
+.page.on > *:nth-child(3){animation-delay:.08s}
+.page.on > *:nth-child(4){animation-delay:.1s}
+
+
+/* ── MOBILE LAYOUT DEFINITIVE ───────────────────────────────── */
+@media(max-width:640px){
+  .sb{position:fixed;inset:0;width:min(280px,85vw);height:var(--app-height);
+    transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+    z-index:300;display:flex !important;flex-direction:column;border-right:none;
+    box-shadow:none;max-width:none;overflow:visible;}
+  .sb.open{transform:translateX(0);box-shadow:20px 0 60px rgba(0,0,0,.55)}
+  .sb.col{width:min(280px,85vw)}
+  .shell{width:100vw;max-width:100vw}
+  .main{flex:1;width:0;min-width:0;max-width:100vw}
+}
+
+/* ── TRANSACTION ITEMS ───────────────────────────────────────── */
+.tx-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 0;border-bottom:1px solid var(--bdr);
+  cursor:pointer;transition:background .15s;
+  border-radius:0;margin:0 -2px;padding-left:2px;
+}
+.tx-item:last-child{border-bottom:none}
+.tx-item:active{background:rgba(255,255,255,.03)}
+.tx-icon{
+  width:34px;height:34px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;position:relative;
+}
+.tx-check{
+  position:absolute;bottom:-3px;right:-3px;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--eme);border:2px solid var(--bg2);
+  display:flex;align-items:center;justify-content:center;
+}
+.tx-check svg{width:8px;height:8px;stroke:#fff;fill:none;stroke-width:2}
+.tx-body{flex:1;min-width:0}
+.tx-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.15px}
+.tx-sub{font-size:11px;color:var(--txt3);margin-top:2px;font-weight:400}
+.tx-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0}
+.tx-amount{font-size:15px;font-weight:800;color:var(--rose);letter-spacing:-.3px}
+.tx-date{font-size:10px;color:var(--txt3);font-weight:500;margin-top:1px}
+
+/* ── CONFIG ITEMS ────────────────────────────────────────────── */
+.cfg-item{
+  background:var(--bg3);border:1px solid var(--bdr);
+  border-radius:16px;padding:13px 14px;margin-bottom:8px;
+  transition:border-color .2s;
+}
+.cfg-item:last-child{margin-bottom:0}
+.cfg-item-off{opacity:.55}
+.cfg-item-actions{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--bdr)}
+
+/* ── INLINE EDIT PANEL ───────────────────────────────────────── */
+.cfg-edit-panel{
+  display:none;background:var(--bg2);
+  border:1.5px solid var(--accent);border-radius:16px;
+  padding:14px;margin-bottom:8px;
+  animation:fadeInUp .18s ease both;
+}
+.cfg-edit-panel.open{display:block}
+.cfg-edit-panel h4{font-size:12px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+
+/* ── FILTER CHIPS ────────────────────────────────────────────── */
+/* ── CHIP PILLS (period selector) ───────────────────────── */
+.chip-row{display:flex;flex-wrap:nowrap;gap:7px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.chip-row::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0;padding:7px 14px;border-radius:20px;
+  font-size:12px;font-weight:600;border:1.5px solid var(--bdr2);
+  background:var(--bg3);color:var(--txt2);cursor:pointer;
+  white-space:nowrap;transition:all .18s;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  user-select:none;-webkit-user-select:none;
+}
+.chip:hover{background:var(--bg4);color:var(--txt)}
+.chip:active{transform:scale(.93)}
+.chip.act{background:rgba(99,102,241,.2);color:var(--accent2);border-color:rgba(99,102,241,.45);font-weight:700}
+
+/* ── SEARCH BAR ──────────────────────────────────────────── */
+.search-bar{
+  display:flex;align-items:center;gap:9px;
+  background:var(--bg2);border:1px solid var(--bdr2);
+  border-radius:14px;padding:10px 13px;margin-bottom:12px;
+  transition:border-color .2s,box-shadow .2s;
+}
+.search-bar:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,.14)}
+.search-bar svg{width:15px;height:15px;stroke:var(--txt3);fill:none;stroke-width:2;flex-shrink:0}
+.search-bar input{
+  flex:1;background:none;border:none;outline:none;
+  font-size:13px;color:var(--txt);font-family:inherit;font-weight:400;
+}
+.search-bar input::placeholder{color:var(--txt3)}
+
+.flt-section{margin-bottom:12px}
+.flt-section-label{font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+.flt-chips{display:flex;flex-wrap:wrap;gap:6px}
+.flt-chip{
+  display:inline-flex;align-items:center;
+  padding:7px 13px;border-radius:20px;
+  font-size:12px;font-weight:600;
+  border:1.5px solid var(--bdr2);
+  background:var(--bg3);color:var(--txt2);
+  cursor:pointer;user-select:none;
+  transition:all .18s;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  min-height:36px;
+}
+.flt-chip:hover{background:var(--bg4);border-color:var(--bdr2);color:var(--txt)}
+.flt-chip:active{transform:scale(.94)}
+.flt-chip.on{
+  background:rgba(99,102,241,.18);
+  border-color:rgba(99,102,241,.5);
+  color:var(--accent2);
+}
+
+/* ── SYNC STATUS ─────────────────────────────────────────────── */
+.sync-stat-row{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 13px;background:var(--bg3);
+  border-radius:14px;margin-bottom:8px;
+}
+
+/* ── CONFIG CADASTROS ─────────────────────────────────────────── */
+.cfg-type-tab{padding:7px 13px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--bdr2);background:var(--bg3);color:var(--txt2);cursor:pointer;white-space:nowrap;transition:all .18s;font-family:inherit;flex-shrink:0}
+.cfg-type-tab.act{background:rgba(99,102,241,.18);color:var(--accent2);border-color:rgba(99,102,241,.35)}
+.cfg-add-form{background:var(--bg3);border-radius:14px;padding:14px;margin-bottom:10px;border:1.5px solid var(--accent)}
+.cfg-add-form h4{font-size:11px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.cfg-item{padding:10px 0;border-bottom:1px solid var(--bdr)}
+.cfg-item:last-child{border-bottom:none;padding-bottom:0}
+.cfg-item-off{opacity:.5}
+.cfg-item-header{display:flex;align-items:center;gap:10px}
+.cfg-item-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.cfg-item-info{flex:1;min-width:0}
+.cfg-item-info .ci-name{font-size:14px;font-weight:700;letter-spacing:-.2px}
+.cfg-item-info .ci-sub{font-size:11px;color:var(--txt3);margin-top:2px}
+.cfg-item-actions{display:flex;gap:5px;flex-shrink:0}
+.cfg-edit-panel{display:none;background:var(--bg2);border:1.5px solid var(--accent);border-radius:14px;padding:13px;margin:8px 0 4px;animation:fadeInUp .16s ease both}
+.cfg-edit-panel.open{display:block}
+.cfg-edit-panel h4{font-size:11px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.cfg-search-hl{background:rgba(99,102,241,.25);border-radius:3px}
+</style>
+
+<script>
+(function(){
+  function setAppHeight(){
+    var h=(window.visualViewport&&window.visualViewport.height)||window.innerHeight;
+    document.documentElement.style.setProperty('--app-height',h+'px');
+  }
+  setAppHeight();
+  window.addEventListener('resize',setAppHeight,{passive:true});
+  window.addEventListener('orientationchange',setAppHeight,{passive:true});
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize',setAppHeight,{passive:true});
+    window.visualViewport.addEventListener('scroll',setAppHeight,{passive:true});
+  }
+})();
+</script>
+</head>
+<body>
+<!-- LOCK -->
+<div id="lock">
+  <div class="lk-avatar-wrap"><div id="lk-av"></div></div>
+  <div class="lk-title" id="lk-title">Finanças</div>
+  <div class="lk-sub">Digite seu PIN para entrar</div>
+  <div class="pin-dots"><div class="pd" id="pd0"></div><div class="pd" id="pd1"></div><div class="pd" id="pd2"></div><div class="pd" id="pd3"></div></div>
+  <div class="pin-err" id="pin-err"></div>
+  <div class="pin-grid" id="pin-grid">
+    <button class="pk" ontouchstart="event.preventDefault();pk('1')" onclick="pk('1')">1</button><button class="pk" ontouchstart="event.preventDefault();pk('2')" onclick="pk('2')">2<span class="ks">ABC</span></button><button class="pk" ontouchstart="event.preventDefault();pk('3')" onclick="pk('3')">3<span class="ks">DEF</span></button>
+    <button class="pk" ontouchstart="event.preventDefault();pk('4')" onclick="pk('4')">4<span class="ks">GHI</span></button><button class="pk" ontouchstart="event.preventDefault();pk('5')" onclick="pk('5')">5<span class="ks">JKL</span></button><button class="pk" ontouchstart="event.preventDefault();pk('6')" onclick="pk('6')">6<span class="ks">MNO</span></button>
+    <button class="pk" ontouchstart="event.preventDefault();pk('7')" onclick="pk('7')">7<span class="ks">PQRS</span></button><button class="pk" ontouchstart="event.preventDefault();pk('8')" onclick="pk('8')">8<span class="ks">TUV</span></button><button class="pk" ontouchstart="event.preventDefault();pk('9')" onclick="pk('9')">9<span class="ks">WXYZ</span></button>
+    <button class="pk emp"></button><button class="pk" ontouchstart="event.preventDefault();pk('0')" onclick="pk('0')">0</button>
+    <button class="pk del" ontouchstart="event.preventDefault();pkDel()" onclick="pkDel()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 4H8l-7 8 7 8h13a2 2 0 002-2V6a2 2 0 00-2-2z"/><line x1="18" y1="9" x2="15" y2="12"/><line x1="15" y1="9" x2="18" y2="12"/></svg></button>
+  </div>
+  <button class="lk-change" onclick="openChangePIN()">Esqueci / Alterar PIN</button>
+</div>
+
+<!-- SHELL -->
+<div class="shell" id="shell" style="display:none">
+<div class="ov" id="ov" onclick="closeSB()"></div>
+
+<!-- SIDEBAR -->
+<div class="sb" id="sb">
+  <div class="sbh">
+    <div id="sbav-box" onclick="nav('perfil',null)"></div>
+    <div class="sbi" onclick="nav('perfil',null)"><div class="sbi-n" id="sb-name">Eu</div><div class="sbi-m" id="sb-mes">—</div></div>
+    <button class="sbtog" id="sb-tog-btn" onclick="togSB()">
+      <svg id="sb-tog-icon" viewBox="0 0 16 16"><path d="M10 3L4 8l6 5"/></svg>
+    </button>
+  </div>
+  <div class="sbscr">
+    <div class="sbsec">Principal</div>
+    <button class="sbtn act" data-p="resumo" onclick="nav('resumo',this)"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg><span class="lbl">Resumo</span></button>
+    <button class="sbtn" data-p="lancar" onclick="nav('lancar',this)"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5V1M5 8h6"/></svg><span class="lbl">Lançar despesa</span></button>
+    <button class="sbtn" data-p="transacoes" onclick="nav('transacoes',this)"><svg viewBox="0 0 16 16"><path d="M2 4h12M2 8h8M2 12h10"/></svg><span class="lbl">Transações</span><span class="bdg" id="sb-cnt" style="display:none">0</span></button>
+    <button class="sbtn" data-p="calendario" onclick="nav('calendario',this)"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M2 7h12M5 1v4M11 1v4"/></svg><span class="lbl">Calendário</span></button>
+    <button class="sbtn" data-p="parcelas" onclick="nav('parcelas',this)"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1"/><path d="M2 7h12M5 3v4M11 3v4"/></svg><span class="lbl">Parcelamentos</span></button>
+    <div class="sbsec">Análise</div>
+    <button class="sbtn" data-p="orcamento" onclick="nav('orcamento',this)"><svg viewBox="0 0 16 16"><path d="M2 13L5 9l3 2 3-5 3-3"/><path d="M11 3h3v3"/></svg><span class="lbl">Orçamento</span></button>
+    <button class="sbtn" data-p="relatorio" onclick="nav('relatorio',this)"><svg viewBox="0 0 16 16"><path d="M2 12V5l3 2 2-3 2 3 3-2V1H2z"/><path d="M2 2h12"/></svg><span class="lbl">Relatório</span></button>
+    <button class="sbtn" data-p="datagrid" onclick="nav('datagrid',this)"><svg viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12"/><path d="M5 2v12M10 2v12"/></svg><span class="lbl">Grade de dados</span></button>
+    <div class="sbsec">Configurações</div>
+    <button class="sbtn" data-p="config" onclick="nav('config',this)"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.6"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M3.1 12.9l1.4-1.4M11.5 4.5l1.4-1.4"/></svg><span class="lbl">Contas & Categorias</span></button>
+    <button class="sbtn" data-p="dados" onclick="nav('dados',this)"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="1"/><path d="M2 6h12M2 10h12M6 2v12M10 2v12"/></svg><span class="lbl">Sync & Importação</span></button>
+  </div>
+  <div class="sbot">
+    <div class="sync-row"><div class="sdot doff" id="sdot"></div><span id="stxt" style="flex:1">—</span></div>
+    <button class="sbtn" data-p="perfil" onclick="nav('perfil',this)"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.6"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.1 3.1l1.4 1.4M11.5 11.5l1.4 1.4M3.1 12.9l1.4-1.4M11.5 4.5l1.4-1.4"/></svg><span class="lbl">Perfil &amp; Config</span></button>
+
+    <button class="sbtn" onclick="lockApp()"><svg viewBox="0 0 16 16"><rect x="3" y="7" width="10" height="8" rx="1"/><path d="M5 7V5a3 3 0 016 0v2"/></svg><span class="lbl">Bloquear</span></button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="bnr inst" id="bnr-inst"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v8M5 7l3 3 3-3"/><rect x="2" y="12" width="12" height="2" rx="1"/></svg><span>Instale na tela inicial</span><button onclick="doInst()">Instalar</button><button class="bc" onclick="dismInst()">×</button></div>
+  <div class="bnr sync" id="bnr-sync"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 8a7 7 0 0112.5-4.3M15 8a7 7 0 01-12.5 4.3M14 4v3h-3M2 12v-3h3"/></svg><span id="bnr-sync-txt">Dados pendentes</span><button onclick="manSync()">Sync</button></div>
+  <div class="topbar">
+    <button class="mbtn" onclick="openSB()">
+      <svg viewBox="0 0 18 18" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><path d="M2 4h14M2 9h14M2 14h14"/></svg>
+    </button>
+    <h1 id="pg-title">Resumo</h1>
+    <select class="mes-sel" id="mesSel" onchange="onMes()"></select>
+    <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+      <button onclick="openGlobalFilter()" id="btn-filter" title="Filtros" style="background:none;border:none;cursor:pointer;color:var(--txt2);padding:5px;border-radius:8px;display:flex">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+      </button>
+      <button onclick="captureAndShare()" title="Relatório" style="background:none;border:none;cursor:pointer;color:var(--txt2);padding:5px;border-radius:8px;display:flex">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      </button>
+      <button onclick="nav('lancar',null)" class="add-btn" style="display:flex;align-items:center;gap:5px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg>
+        Lançar
+      </button>
+    </div>
+  </div>
+  <div id="global-flt-panel" class="global-filter-inline"></div>
+
+  <div class="cnt" id="cnt">
+
+<!-- RESUMO -->
+<div class="page on" id="p-resumo">
+  <div class="hero"><div class="hl" id="r-hl">Total gasto no mês</div><div class="hv" id="r-tot">R$ 0,00</div><div class="hs" id="r-sub">0 lançamentos</div></div>
+    <div class="hero-row"><div class="hero-pill"><div class="pl">Cartão</div><div class="pv" id="r-cart">R$ 0</div></div><div class="hero-pill"><div class="pl">Pix/Dinheiro</div><div class="pv" id="r-pix">R$ 0</div></div><div class="hero-pill"><div class="pl">Parcelas fut.</div><div class="pv" id="r-pf">R$ 0</div></div></div>
+  </div>
+  <div style="display:none"><select id="r-cat-sel"><option value=""></option></select><select id="r-sub-sel"><option value=""></option></select><select id="r-acc-sel"><option value=""></option></select><select id="r-pag-sel"><option value=""></option></select></div>
+  <div class="card"><div class="ch"><span class="ct">Por categoria</span></div><div id="r-cats"></div></div>
+  <div class="card"><div class="ch"><span class="ct">Por conta / cartão</span></div><div id="r-accs"></div></div>
+</div>
+
+<!-- LANÇAR -->
+<div class="page" id="p-lancar">
+  <div class="card">
+    <div class="ch"><span class="ct">Nova despesa</span></div>
+    <div class="frow"><div class="fg" style="flex:2"><label>Descrição</label><input id="l-desc" placeholder="Ex: almoço, uber..." autocomplete="off"/></div><div class="fg"><label>Valor R$</label><div style="display:flex;gap:5px;align-items:center">
+          <input type="text" id="l-val" placeholder="0,00" inputmode="decimal" oninput="calcPV()" style="flex:1"/>
+          <button type="button" class="btn sm" onclick="openCalc()" title="Calculadora de parcelas" style="flex-shrink:0;padding:9px 10px;font-size:15px;line-height:1">🧮</button>
+        </div></div></div>
+    <div class="frow"><div class="fg"><label>Data</label><input type="date" id="l-date"/></div><div class="fg"><label>Pagamento *</label><select id="l-pag" onchange="onPag()"><option value="">Selecione...</option></select></div></div>
+    <div class="frow"><div class="fg" id="l-pag-row"><label>Cartão</label><select id="l-cart" onchange="onCart()"><option value="">Nenhum</option></select></div><div class="fg"><label>Conta</label><select id="l-acc"><option value="">Nenhuma</option></select></div></div>
+    <div class="frow"><div class="fg"><label>Categoria *</label><select id="l-cat" required onchange="onCat()"><option value="">Selecione...</option></select></div><div class="fg"><label>Subcategoria</label><select id="l-sub"><option value="">Nenhuma</option></select></div></div>
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 0"><input type="checkbox" id="l-parc" onchange="onParc()"/><label for="l-parc" style="font-size:13px;color:var(--txt2);cursor:pointer">Dividir em parcelas</label></div>
+    <div id="l-pb" style="display:none"><div class="frow"><div class="fg"><label>Qtd parcelas</label><input type="number" id="l-np" min="2" max="60" value="2" inputmode="numeric" oninput="calcPV()"/></div><div class="fg"><label>Por parcela</label><div id="l-pv" style="font-size:13px;padding:9px 0;color:var(--txt2)">R$ 0,00</div></div></div></div>
+    <div class="frow"><div class="fg"><label>Observação</label><input id="l-obs" placeholder="Opcional..." autocomplete="off"/></div></div>
+    <div style="padding:7px 0">
+      <div style="font-size:11px;font-weight:600;color:var(--txt2);margin-bottom:6px">📎 Comprovante (opcional)</div>
+      <div style="display:flex;gap:8px;align-items:center"><button class="btn sm" type="button" onclick="document.getElementById('l-receipt').click()">📷 Foto</button><span style="font-size:11px;color:var(--txt3)">nota fiscal, cupom...</span></div>
+      <input type="file" id="l-receipt" accept="image/*" capture="environment" style="display:none" onchange="handleReceipt(this)"/>
+      <div id="receipt-prev" style="display:none;margin-top:7px"></div>
+    </div>
+    <button class="btn pr fl" id="btn-add-desp" style="margin-top:8px" onclick="addDesp()">+ Adicionar despesa</button>
+  </div>
+</div>
+
+<!-- TRANSAÇÕES -->
+<div class="page" id="p-transacoes">
+  <div class="search-bar">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input id="f-q" placeholder="Buscar transações..." oninput="renderTrans()"/>
+    <button onclick="toggleTransFilters()" style="background:none;border:none;cursor:pointer;color:var(--txt3);padding:4px;flex-shrink:0;-webkit-tap-highlight-color:transparent" title="Filtros">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+    </button>
+  </div>
+
+  <div id="trans-filter-panel" style="display:none;margin-bottom:10px">
+    <!-- Período -->
+    <div class="chip-row" id="period-chips" style="margin-bottom:8px">
+      <div class="chip act" onclick="setPer2('mes',this)">Este mês</div>
+      <div class="chip" onclick="setPer2('7',this)">7 dias</div>
+      <div class="chip" onclick="setPer2('30',this)">30 dias</div>
+      <div class="chip" onclick="setPer2('90',this)">90 dias</div>
+      <div class="chip" onclick="setPer2('ano',this)">Este ano</div>
+      <div class="chip" onclick="setPer2('custom',this)">Período livre</div>
+    </div>
+    <div id="custom-range" style="display:none;margin-bottom:8px">
+      <div class="drange">
+        <input type="date" id="f-d1" onchange="renderTrans()"/>
+        <span style="font-size:11px;color:var(--txt3)">até</span>
+        <input type="date" id="f-d2" onchange="renderTrans()"/>
+      </div>
+    </div>
+    <!-- Chips multi-select na ordem: Contas → Pagamentos → Cartões → Categorias → Subcategorias -->
+    <div style="background:var(--bg2);border:0.5px solid var(--bdr);border-radius:var(--r);padding:10px 12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span style="font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em">Filtros — marque um ou mais</span>
+        <button class="btn xs" onclick="clearFlt()">Limpar</button>
+      </div>
+      <div class="flt-section"><div class="flt-section-label">Contas</div><div class="flt-chips" id="f-flt-accs"></div></div>
+      <div class="flt-section"><div class="flt-section-label">Pagamentos</div><div class="flt-chips" id="f-flt-pags"></div></div>
+      <div class="flt-section"><div class="flt-section-label">Cartões</div><div class="flt-chips" id="f-flt-carts"></div></div>
+      <div class="flt-section"><div class="flt-section-label">Categorias</div><div class="flt-chips" id="f-flt-cats"></div></div>
+      <div class="flt-section"><div class="flt-section-label">Subcategorias</div><div class="flt-chips" id="f-flt-subs"></div></div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding:0 2px">
+    <span style="font-size:12px;color:var(--txt3);font-weight:500" id="t-lbl">—</span>
+    <span style="font-size:16px;font-weight:800;color:var(--rose)" id="t-tot">R$ 0,00</span>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div id="list-trans"></div>
+  </div>
+</div>
+
+<!-- CALENDÁRIO -->
+<div class="page" id="p-calendario">
+  <div class="card">
+    <div class="cal-nav"><button onclick="calPrev()">‹ Anterior</button><span class="cal-title" id="cal-title">—</span><button onclick="calNext()">Próximo ›</button></div>
+    <div style="display:none"><select id="cal-acc-flt"><option value=""></option></select><select id="cal-cat-flt"><option value=""></option></select></div>
+    <div id="cal-month-total" style="text-align:center;font-size:20px;font-weight:800;color:var(--rose);letter-spacing:-.5px;margin-top:8px"></div>
+    <div class="cal-grid" id="cal-grid" style="margin-top:8px"></div>
+  </div>
+  <div id="cal-detail"></div>
+</div>
+
+<!-- PARCELAS + ASSINATURAS -->
+<div class="page" id="p-parcelas">
+  <!-- Tabs: Parcelamentos / Assinaturas -->
+  <div class="tabs" id="parc-tabs">
+    <button class="tab act" onclick="parcTab('parc',this)">Parcelamentos</button>
+    <button class="tab" onclick="parcTab('assin',this)">Assinaturas</button>
+  </div>
+
+  <!-- ── PARCELAMENTOS ── -->
+  <div id="pt-parc">
+    <div style="display:flex;gap:8px;margin-bottom:12px" id="parc-summary"></div>
+    <div style="display:none"><input id="parc-q"/><div id="parc-cat-chips"></div></div>
+    <div id="list-parc"></div>
+  </div>
+
+  <!-- ── ASSINATURAS ── -->
+  <div id="pt-assin" style="display:none">
+    <!-- Cards de resumo -->
+    <div style="display:flex;gap:8px;margin-bottom:12px" id="assin-summary"></div>
+
+    <!-- Formulário nova assinatura -->
+    <div class="card" id="assin-form-card">
+      <div class="ch">
+        <span class="ct">Nova assinatura / recorrência</span>
+        <button class="btn xs" onclick="togAssinForm()">+ Adicionar</button>
+      </div>
+      <div id="assin-form-body" style="display:none">
+        <div class="frow">
+          <div class="fg" style="flex:2"><label>Nome</label><input id="as-nome" placeholder="Ex: Netflix, Spotify, Academia..."/></div>
+          <div class="fg" style="max-width:80px"><label>Valor R$</label><input type="text" id="as-val" placeholder="0,00" inputmode="decimal"/></div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label>Periodicidade</label>
+            <select id="as-periodo">
+              <option value="semanal">Semanal</option>
+              <option value="quinzenal">Quinzenal</option>
+              <option value="mensal" selected>Mensal</option>
+              <option value="bimestral">Bimestral</option>
+              <option value="trimestral">Trimestral</option>
+              <option value="semestral">Semestral</option>
+              <option value="anual">Anual</option>
+            </select>
+          </div>
+          <div class="fg"><label>Dia de cobrança</label><input type="number" id="as-dia" min="1" max="31" placeholder="Ex: 15" inputmode="numeric"/></div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label>Categoria</label><select id="as-cat"><option value="">Nenhuma</option></select></div>
+          <div class="fg"><label>Conta</label><select id="as-acc"><option value="">Nenhuma</option></select></div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label>Início</label><input type="date" id="as-inicio"/></div>
+          <div class="fg"><label>Término (opcional)</label><input type="date" id="as-fim" placeholder="Sem término"/></div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label>Observação</label><input id="as-obs" placeholder="Opcional..."/></div>
+        </div>
+        <!-- Tipo: assinatura ou recorrência fixa -->
+        <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+          <label class="tipo-radio" id="tr-assin">
+            <input type="radio" name="as-tipo" value="assinatura" checked onchange="onAsTipo()"/>
+            <span class="tipo-icon">📱</span>
+            <span class="tipo-label">Assinatura<br><small>streaming, apps...</small></span>
+          </label>
+          <label class="tipo-radio" id="tr-recorr">
+            <input type="radio" name="as-tipo" value="recorrente" onchange="onAsTipo()"/>
+            <span class="tipo-icon">🔄</span>
+            <span class="tipo-label">Recorrente<br><small>aluguel, academia...</small></span>
+          </label>
+          <label class="tipo-radio" id="tr-parcfix">
+            <input type="radio" name="as-tipo" value="parcelado" onchange="onAsTipo()"/>
+            <span class="tipo-icon">💳</span>
+            <span class="tipo-label">Parcelado fixo<br><small>nº definido de vezes</small></span>
+          </label>
+        </div>
+        <!-- Só para parcelado fixo -->
+        <div id="as-n-wrap" style="display:none" class="frow">
+          <div class="fg"><label>Nº de parcelas</label><input type="number" id="as-n" min="2" max="240" placeholder="Ex: 12" inputmode="numeric"/></div>
+          <div class="fg"><label>Parcela / período</label><div id="as-pv" style="font-size:13px;padding:10px 0;color:var(--txt2)">R$ 0,00</div></div>
+        </div>
+        <button class="btn pr fl" onclick="addAssinatura()">+ Salvar recorrência</button>
+      </div>
+    </div>
+
+    <!-- Lista de assinaturas -->
+    <div class="search-bar" style="margin-bottom:10px">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input id="assin-q" placeholder="Buscar assinatura..." oninput="renderAssinaturas()"/>
+    </div>
+    <div class="chip-row" id="assin-tipo-chips">
+      <div class="chip act" onclick="setAssinTipoFilt('',this)">Todas</div>
+      <div class="chip" onclick="setAssinTipoFilt('assinatura',this)">📱 Assinaturas</div>
+      <div class="chip" onclick="setAssinTipoFilt('recorrente',this)">🔄 Recorrentes</div>
+      <div class="chip" onclick="setAssinTipoFilt('parcelado',this)">💳 Parcelados</div>
+    </div>
+    <div id="list-assin"></div>
+  </div>
+</div>
+
+<!-- CONTAS -->
+<div class="page" id="p-orcamento">
+  <div class="tabs" id="orc-tabs" style="margin-bottom:10px">
+    <button class="tab act" onclick="orcTab('cat',this)">Categoria</button>
+    <button class="tab"     onclick="orcTab('acc',this)">Conta</button>
+    <button class="tab"     onclick="orcTab('cart',this)">Cartão</button>
+  </div>
+  <div id="orc-summary" style="display:flex;gap:8px;margin-bottom:10px"></div>
+  <div class="search-bar" style="margin-bottom:10px">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input id="orc-q" placeholder="Filtrar..." oninput="renderOrc()"/>
+  </div>
+  <div id="list-orc"></div>
+  <div style="height:80px"></div>
+</div>
+
+<div class="page" id="p-dados">
+  <div class="tabs" id="dados-tabs">
+    <button class="tab act" onclick="dadosTab('sync',this)">Sync</button>
+    <button class="tab" onclick="dadosTab('imp',this)">Importar</button>
+    <button class="tab" onclick="dadosTab('csv',this)">CSV</button>
+  </div>
+
+  <!-- ── SYNC ── -->
+  <div id="dados-t-sync">
+    <div id="sync-hero" class="sync-hero">
+      <div class="sync-hero-left">
+        <div class="sync-dot-big" id="sync-dot-big"></div>
+        <div>
+          <div class="sync-hero-status" id="sync-hero-status">Verificando...</div>
+          <div class="sync-hero-sub" id="sync-hero-sub">—</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn sm pr" onclick="manSync()">↑ Enviar</button>
+        <button class="btn sm" onclick="openSheetDirect()">↗ Planilha</button>
+      </div>
+    </div>
+    <!-- Banner primeiro acesso / reconfiguração -->
+    <div id="first-run-banner" style="display:none;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.3);border-radius:var(--r);padding:14px;margin-bottom:8px;position:relative">
+      <button onclick="document.getElementById('first-run-banner').style.display='none'" style="position:absolute;top:6px;right:8px;background:transparent;border:none;color:var(--txt2);font-size:18px;cursor:pointer;padding:2px 6px" title="Fechar">×</button>
+      <div style="font-size:14px;font-weight:800;margin-bottom:6px;color:var(--ind2)">🔗 Conectar ao Google Sheets</div>
+      <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.8">
+        Cole a <strong>URL do Web App</strong> do Apps Script.<br>
+        <span style="color:var(--eme);font-size:11px">✓ A planilha é detectada e vinculada automaticamente — não precisa de outra URL.</span>
+      </div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:flex-end">
+        <input type="url" id="first-run-url" placeholder="https://script.google.com/macros/s/.../exec" style="flex:1;min-width:160px;font-size:12px" autocomplete="off" oninput="onFirstRunUrlInput(this.value)"/>
+        <button class="btn pr sm" onclick="firstRunLoad()">⬇ Conectar</button>
+      </div>
+      <div id="first-run-status" style="font-size:11px;margin-top:8px;min-height:18px"></div>
+    </div>
+
+    <div id="sync-status"></div>
+
+    <!-- Ações -->
+    <div class="card">
+      <div class="ch"><span class="ct">Sincronização</span></div>
+      <div class="trow"><div class="ti"><div class="t1">Salvar tudo na nuvem</div><div class="t2">Config + categorias + despesas</div></div><button class="btn sm pr" onclick="saveAllToCloud()">☁ Salvar</button></div>
+      <div class="trow"><div class="ti"><div class="t1">Carregar de outro dispositivo</div><div class="t2">Restaura configurações e despesas</div></div><button class="btn sm" onclick="loadAllFromCloud()">⬇ Carregar</button></div>
+      <div class="trow"><div class="ti"><div class="t1">Auto-sync ao reconectar</div><div class="t2">Envia pendentes quando volta internet</div></div><label class="tgl"><input type="checkbox" id="cfg-asy" onchange="saveCfg()"/><span class="ts"></span></label></div>
+      <div id="cfg-sync-status" style="font-size:11px;margin-top:4px;min-height:14px"></div>
+    </div>
+
+    <!-- Backup automático no Drive — usa a mesma URL do Apps Script acima -->
+    <div class="card">
+      <div class="ch"><span class="ct">☁ Backup automático no Drive</span></div>
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:var(--rs);margin-bottom:12px">
+        <div id="drive-dot" style="width:9px;height:9px;border-radius:50%;background:var(--txt3);flex-shrink:0"></div>
+        <div style="flex:1"><div style="font-size:13px;font-weight:600" id="drive-status-title">Não configurado</div><div style="font-size:11px;color:var(--txt3)" id="drive-status-text">Configure o Apps Script acima primeiro</div></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px">Frequência</div>
+      <div style="display:flex;gap:6px;margin-bottom:10px">
+        <label class="tipo-radio" style="flex:1"><input type="radio" name="drive-freq" value="never" checked onchange="saveDriveCfg()"/><span class="tipo-icon" style="font-size:15px">🚫</span><span class="tipo-label" style="font-size:9px">Manual</span></label>
+        <label class="tipo-radio" style="flex:1"><input type="radio" name="drive-freq" value="daily" onchange="saveDriveCfg()"/><span class="tipo-icon" style="font-size:15px">📅</span><span class="tipo-label" style="font-size:9px">Diário</span></label>
+        <label class="tipo-radio" style="flex:1"><input type="radio" name="drive-freq" value="weekly" onchange="saveDriveCfg()"/><span class="tipo-icon" style="font-size:15px">🗓</span><span class="tipo-label" style="font-size:9px">Semanal</span></label>
+        <label class="tipo-radio" style="flex:1"><input type="radio" name="drive-freq" value="monthly" onchange="saveDriveCfg()"/><span class="tipo-icon" style="font-size:15px">📆</span><span class="tipo-label" style="font-size:9px">Mensal</span></label>
+      </div>
+      <details style="margin-bottom:10px"><summary style="font-size:11px;font-weight:600;color:var(--accent2);cursor:pointer;padding:4px 0">Pasta personalizada (opcional) ▸</summary>
+        <div class="frow" style="margin-top:8px"><div class="fg"><input id="drive-folder" placeholder="ID da pasta no Drive — vazio = raiz" oninput="saveDriveCfg()" style="font-size:12px"/></div></div>
+      </details>
+      <div style="font-size:10px;color:var(--txt3);margin-bottom:10px;line-height:1.5">O app verifica sozinho ao abrir se já passou o tempo da frequência escolhida e envia o backup automaticamente.</div>
+      <div style="display:flex;gap:7px"><button class="btn pr sm" style="flex:1" onclick="backupToDrive()">📤 Fazer backup agora</button></div>
+      <div id="drive-result" style="font-size:12px;margin-top:8px;min-height:14px;line-height:1.6"></div>
+    </div>
+
+    <!-- Configuração do Web App -->
+    <div class="card">
+      <div class="ch"><span class="ct">Configurar Apps Script</span><button class="btn xs" onclick="togSetupDetail()" id="setup-tog">Configurar</button></div>
+      <div id="setup-detail" style="display:none">
+        <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.9;background:var(--bg3);padding:10px 12px;border-radius:var(--rs)">
+          1. Abra sua planilha → <strong>Extensões → Apps Script</strong><br>
+          2. Cole o conteúdo do arquivo <code style="background:var(--bg4);padding:1px 5px;border-radius:3px">apps-script.gs</code><br>
+          3. <strong>Implantar → App da Web → Executar como: Eu → Acesso: Qualquer pessoa</strong><br>
+          4. Cole abaixo <strong>apenas a URL do Web App</strong> — a planilha é detectada automaticamente
+        </div>
+
+        <!-- ÚNICO campo necessário: URL do Web App -->
+        <div class="frow" style="margin-bottom:2px"><div class="fg">
+          <label style="font-size:12px;font-weight:700;color:var(--txt)">URL do Web App <span style="font-size:10px;font-weight:400;color:var(--eme)">(apenas esta — planilha é automática)</span></label>
+          <input type="url" id="sh-url" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off" style="font-size:12px" oninput="onShUrlInput(this.value)"/>
+        </div></div>
+        <div id="sh-url-status" style="font-size:11px;margin:2px 0 8px;min-height:16px"></div>
+
+        <!-- Indicador de planilha detectada (aparece automaticamente após salvar) -->
+        <div id="sh-sheet-detected" style="display:none;font-size:12px;padding:9px 12px;background:rgba(16,185,129,.12);border:0.5px solid rgba(16,185,129,.3);border-radius:var(--rs);margin-bottom:10px;color:var(--eme);align-items:center;gap:8px">
+          <span style="flex:1;font-weight:600">✅ Planilha detectada e vinculada automaticamente</span>
+          <button class="btn xs" onclick="openSheetDirect()">↗ Abrir Planilha</button>
+        </div>
+        <!-- campo hidden — preenchido automaticamente, não precisa de input do usuário -->
+        <input type="hidden" id="sh-sheet-url"/>
+
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn pr sm" style="flex:1" onclick="saveSyncCfg()">✅ Salvar e Conectar</button>
+          <button class="btn sm" style="flex:1" onclick="testSync()">🔍 Testar</button>
+        </div>
+        <div style="font-size:10px;color:var(--txt3);margin-top:8px;text-align:center">
+          Só a URL do Web App é necessária. A planilha é vinculada automaticamente.
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="pend-card" style="display:none"><div class="ch"><span class="ct">Pendentes de envio</span></div><div id="pend-list"></div></div>
+  </div>
+
+  <!-- ── IMPORTAR ── -->
+  <div id="dados-t-imp" style="display:none">
+    <div class="card">
+      <div class="ch"><span class="ct">Importar dados</span></div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <label class="tipo-radio" style="flex:1"><input type="radio" name="imp-tipo" value="json" checked onchange="onImpTipo()"/><span class="tipo-icon">📄</span><span class="tipo-label">JSON<br><small>importar_bak.json</small></span></label>
+        <label class="tipo-radio" style="flex:1"><input type="radio" name="imp-tipo" value="xlsx" onchange="onImpTipo()"/><span class="tipo-icon">📊</span><span class="tipo-label">Excel<br><small>.xlsx</small></span></label>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" id="imp-neg-pos" checked style="width:16px;height:16px;accent-color:var(--accent);flex-shrink:0"/> Negativos → positivos</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" id="imp-only-desp" checked style="width:16px;height:16px;accent-color:var(--accent);flex-shrink:0"/> Só despesas</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" id="imp-merge" checked style="width:16px;height:16px;accent-color:var(--accent);flex-shrink:0"/> Mesclar com dados existentes</label>
+      </div>
+      <div class="imp-zone" id="imp-zone" onclick="document.getElementById('imp-file').click()"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="this.classList.remove('drag');handleDropImport(event)">
+        <div class="imp-zone-icon" id="imp-zone-icon">📂</div>
+        <div class="imp-zone-text" id="imp-zone-text">Toque para selecionar</div>
+        <div class="imp-zone-sub" id="imp-zone-sub">importar_bak.json</div>
+      </div>
+      <input type="file" id="imp-file" accept=".json,.xlsx,.xls" style="display:none" onchange="handleImportFile(this.files[0])"/>
+      <div id="imp-result" style="display:none;margin-top:10px" class="imp-result"></div>
+      <div id="imp-actions" style="display:none;margin-top:10px">
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn pr" onclick="confirmImport()" style="flex:1">✓ Confirmar</button>
+          <button class="btn" onclick="cancelImport()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+    <!-- Migração -->
+    <div class="card">
+      <div class="ch"><span class="ct">Migração</span></div>
+      <div style="font-size:12px;color:var(--txt2);margin-bottom:10px">Após importar, ajuste categorias→contas e subcategorias→cartões aqui.</div>
+      <div class="tabs" style="margin-bottom:10px">
+        <button class="tab act" onclick="migTab('sub',this)">Subcats→Cartões</button>
+        <button class="tab" onclick="migTab('pag',this)">Pagamentos</button>
+        <button class="tab" onclick="migTab('cat',this)">Cats→Contas</button>
+      </div>
+      <div id="mig-t-sub"><div id="mig-sub-list"></div><button class="btn pr sm" onclick="applyMigSubs()" style="width:100%;margin-top:8px">✓ Aplicar</button></div>
+      <div id="mig-t-pag" style="display:none"><div id="mig-pag-list"></div><button class="btn pr sm" onclick="applyMigPags()" style="width:100%;margin-top:8px">✓ Aplicar</button></div>
+      <div id="mig-t-cat" style="display:none"><div id="mig-cat-list"></div><button class="btn pr sm" onclick="applyMigCats()" style="width:100%;margin-top:8px">✓ Aplicar</button></div>
+    </div>
+    <!-- Apagar -->
+    <div class="card">
+      <div class="ch"><span class="ct">🗑 Apagar dados</span></div>
+      <div class="frow"><div class="fg"><label>De</label><input type="date" id="del2-d1"/></div><div class="fg"><label>Até</label><input type="date" id="del2-d2"/></div></div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px">
+        <select id="del2-cat" style="flex:1"><option value="">Todas cats</option></select>
+        <select id="del2-acc" style="flex:1"><option value="">Todas contas</option></select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:10px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" id="del2-desp" checked style="width:16px;height:16px;accent-color:var(--rose);flex-shrink:0"/> Despesas filtradas</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" id="del2-cfg" style="width:16px;height:16px;accent-color:var(--rose);flex-shrink:0"/> Configurações</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" id="del2-tudo" style="width:16px;height:16px;accent-color:var(--rose);flex-shrink:0"/> Tudo (reset total)</label>
+      </div>
+      <div id="del2-preview" style="font-size:12px;padding:8px 10px;background:var(--bg3);border-radius:var(--rs);margin-bottom:10px;min-height:32px">Selecione filtros.</div>
+      <div style="display:flex;gap:7px"><button class="btn sm" onclick="previewDel2()">Pré-visualizar</button><button class="btn dn" onclick="execDel2()">Apagar</button></div>
+    </div>
+  </div>
+
+  <!-- ── CSV ── -->
+  <div id="dados-t-csv" style="display:none">
+    <div class="card">
+      <div class="ch"><span class="ct">Exportar CSV</span><select id="ex-mes" class="mes-sel" onchange="renderCSV()"></select></div>
+      <div id="csv-prev" style="background:var(--bg3);border-radius:var(--rs);padding:9px;font-family:monospace;font-size:10px;color:var(--txt3);white-space:pre;overflow-x:auto;max-height:120px;overflow-y:auto;border:0.5px solid var(--bdr);margin-bottom:10px"></div>
+      <div style="display:flex;gap:7px"><button class="btn sm" onclick="copyCSV()">Copiar</button><button class="btn pr sm" onclick="dlCSV()">⬇ Baixar</button></div>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ct">Apagar por período</span></div>
+      <div class="drange"><input type="date" id="del-d1"/><span style="font-size:11px;color:var(--txt3)">até</span><input type="date" id="del-d2"/></div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px">
+        <select id="del-cat"><option value="">Todas cats</option></select>
+        <select id="del-acc"><option value="">Todas contas</option></select>
+      </div>
+      <div id="del-preview" style="font-size:12px;color:var(--txt2);margin-bottom:10px;padding:9px;background:var(--bg3);border-radius:var(--rs)">Selecione um período.</div>
+      <div style="display:flex;gap:7px"><button class="btn sm" onclick="previewDel()">Pré-visualizar</button><button class="btn dn" onclick="execDel()">Apagar</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="p-perfil">
+  <!-- Avatar hero -->
+  <div class="profile-hero">
+    <div id="prof-av-big" style="flex-shrink:0;cursor:pointer" onclick="document.getElementById('av-file').click()"></div>
+    <div class="profile-hero-info">
+      <div class="profile-name" id="pf-nome-display">—</div>
+      <div class="profile-email" id="pf-email-display">—</div>
+      <div class="profile-meta" id="pf-meta-display"></div>
+    </div>
+    <button class="btn sm" onclick="document.getElementById('av-file').click()" style="flex-shrink:0;align-self:flex-start">📷</button>
+    <input type="file" id="av-file" accept="image/*" style="display:none" onchange="changeAvatar(this)"/>
+  </div>
+
+  <!-- Tabs: Perfil / Segurança / Aparência -->
+  <div class="tabs"><button class="tab act" onclick="pfTab('info',this)">Perfil</button><button class="tab" onclick="pfTab('seg',this)">Segurança</button><button class="tab" onclick="pfTab('tema',this)">Aparência</button><button class="tab" onclick="pfTab('dados',this)">Dados</button></div>
+
+  <div id="pf-info">
+    <div class="card">
+      <div class="frow"><div class="fg"><label>Nome</label><input id="pf-nome" placeholder="Seu nome" autocomplete="name" oninput="updateProfilePreview()"/></div></div>
+      <div class="frow"><div class="fg"><label>Email</label><input type="email" id="pf-email" placeholder="seu@email.com" autocomplete="email" oninput="updateProfilePreview()"/></div></div>
+      <div class="frow"><div class="fg"><label>Meta de gastos mensais R$</label><input type="text" id="pf-meta" placeholder="0,00" inputmode="decimal" oninput="updateProfilePreview()"/></div></div>
+      <div id="meta-accs-section" style="margin-top:4px">
+        <div style="font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px">Contas que entram na meta</div>
+        <div id="meta-acc-list"></div>
+        <div class="meta-total-bar" id="meta-total-bar" style="display:none">
+          <div style="font-size:11px;color:var(--txt3);margin-bottom:4px">Gasto este mês nas contas selecionadas</div>
+          <div class="meta-total-val" id="meta-total-val">R$ 0,00</div>
+          <div class="prog" style="margin-top:8px"><div class="pf" id="meta-prog-bar" style="width:0%"></div></div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:4px" id="meta-prog-text"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:4px">
+        <button class="btn pr sm" onclick="savePerfil()">Salvar perfil</button>
+        <button id="av-del-btn" class="btn sm dn" onclick="removeAvatar()" style="display:none">Remover foto</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="pf-seg" style="display:none">
+    <div class="card">
+      <div class="trow"><div class="ti"><div class="t1">PIN de acesso</div><div class="t2">4 dígitos · atual: ●●●●</div></div><button class="btn sm" onclick="openChangePIN()">Alterar</button></div>
+      <div class="trow"><div class="ti"><div class="t1">Bloquear ao minimizar</div><div class="t2">Exige PIN ao voltar ao app</div></div><label class="tgl"><input type="checkbox" id="cfg-lock" onchange="saveCfg()"/><span class="ts"></span></label></div>
+    </div>
+  </div>
+
+  <div id="pf-tema" style="display:none">
+    <div class="card">
+      <div class="ch"><span class="ct">Tema</span></div>
+      <div class="theme-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="theme-swatch sel" style="background:#111827" data-t="dark"     onclick="setTheme('dark',this)"     title="Escuro">🌙</div>
+        <div class="theme-swatch"    style="background:#f0f4ff;color:#0f172a" data-t="light"    onclick="setTheme('light',this)"    title="Claro">☀️</div>
+        <div class="theme-swatch"    style="background:#0f2040" data-t="ocean"    onclick="setTheme('ocean',this)"    title="Oceano">🌊</div>
+        <div class="theme-swatch"    style="background:#0f2d18" data-t="forest"   onclick="setTheme('forest',this)"   title="Floresta">🌿</div>
+        <div class="theme-swatch"    style="background:#2d1010" data-t="sunset"   onclick="setTheme('sunset',this)"   title="Pôr do sol">🌅</div>
+        <div class="theme-swatch"    style="background:#1a1625" data-t="dusk"     onclick="setTheme('dusk',this)"     title="Crepúsculo">🌆</div>
+        <div class="theme-swatch"    style="background:#0f1419" data-t="slate"    onclick="setTheme('slate',this)"    title="Ardósia">🩶</div>
+        <div class="theme-swatch"    style="background:#fdf6f0;color:#3d2b1f" data-t="latte"    onclick="setTheme('latte',this)"    title="Café">☕</div>
+        <div class="theme-swatch"    style="background:#f5f0ff;color:#2e1a6b" data-t="lavender" onclick="setTheme('lavender',this)" title="Lavanda">🌸</div>
+        <div class="theme-swatch"    style="background:#f0fdf8;color:#0f3d2b" data-t="mint"     onclick="setTheme('mint',this)"     title="Menta">🍃</div>
+        <div class="theme-swatch"    style="background:#faf7f0;color:#2c2416" data-t="sand"     onclick="setTheme('sand',this)"     title="Areia">🏖</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="trow"><div class="ti"><div class="t1">Menu recolhido por padrão</div></div><label class="tgl"><input type="checkbox" id="cfg-col" onchange="saveCfg()"/><span class="ts"></span></label></div>
+      <div class="trow"><div class="ti"><div class="t1">Badge de contagem</div></div><label class="tgl"><input type="checkbox" id="cfg-bdg" onchange="saveCfg();renderBadge()"/><span class="ts"></span></label></div>
+      <div class="trow"><div class="ti"><div class="t1">Sync ao lançar despesa</div></div><label class="tgl"><input type="checkbox" id="cfg-son" onchange="saveCfg()"/><span class="ts"></span></label></div>
+    </div>
+  </div>
+
+  <div id="pf-dados" style="display:none">
+    <div class="card">
+      <div class="trow"><div class="ti"><div class="t1">Exportar backup JSON</div><div class="t2">Sem fotos · restaurável</div></div><button class="btn sm" onclick="expJSON()">Exportar</button></div>
+      <div class="trow"><div class="ti"><div class="t1">Importar backup</div></div><button class="btn sm" onclick="document.getElementById('imp-f').click()">Importar</button><input type="file" id="imp-f" accept=".json" style="display:none" onchange="impJSON(this)"/></div>
+      <div class="trow"><div class="ti"><div class="t1" style="color:var(--rose)">Apagar todos os dados</div><div class="t2">Irreversível</div></div><button class="btn dn sm" onclick="clearAll()">Apagar</button></div>
+    </div>
+    <div class="card"><div class="trow"><div class="t1">Versão</div><span style="font-size:12px;color:var(--txt3)">v1.8</span></div></div>
+    <button class="btn dn sm" onclick="lockApp()" style="width:100%;margin-top:4px;justify-content:center">🔒 Bloquear app</button>
+  </div>
+</div>
+
+<!-- CONFIG (redireciona para perfil) -->
+<div class="page" id="p-config">
+  <div class="topbar">
+    <h1>Configurações</h1>
+  </div>
+  <div class="cnt" id="cfg-cnt">
+
+    <!-- ── CADASTROS ─────────────────────────────────────── -->
+    <div class="card" style="margin-bottom:10px">
+      <div class="ch">
+        <span class="ct">Cadastros</span>
+        <div style="display:flex;gap:6px">
+          <button class="btn xs" onclick="cfgSearchToggle()">🔍</button>
+        </div>
+      </div>
+      <div id="cfg-search-box" style="display:none;margin-bottom:10px">
+        <input id="cfg-search" placeholder="Buscar conta, cartão, categoria..." oninput="cfgSearch(this.value)" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--bdr2);background:var(--bg3);color:var(--txt);font-size:13px;box-sizing:border-box"/>
+      </div>
+
+      <!-- Abas de tipo -->
+      <div style="display:flex;gap:4px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none">
+        <button class="cfg-type-tab act" onclick="cfgTypeTab('contas',this)">🏦 Contas</button>
+        <button class="cfg-type-tab" onclick="cfgTypeTab('cartoes',this)">💳 Cartões</button>
+        <button class="cfg-type-tab" onclick="cfgTypeTab('cats',this)">🏷 Categorias</button>
+        <button class="cfg-type-tab" onclick="cfgTypeTab('subs',this)">↳ Subcategorias</button>
+        <button class="cfg-type-tab" onclick="cfgTypeTab('pags',this)">💸 Pagamentos</button>
+      </div>
+
+      <!-- CONTAS -->
+      <div id="cfg-pane-contas">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:11px;color:var(--txt3)">Banco, carteira, digital — onde o dinheiro fica</span>
+          <button class="btn pr xs" onclick="cfgAddToggle('acc')">+ Nova</button>
+        </div>
+        <!-- Formulário novo (oculto) -->
+        <div id="cfg-add-acc" class="cfg-add-form" style="display:none">
+          <h4>➕ Nova Conta</h4>
+          <div class="frow">
+            <div class="fg" style="flex:2"><label>Nome</label><input id="ac-nome" placeholder="Ex: Nubank, Carteira..."/></div>
+            <div class="fg" style="max-width:56px"><label>Emoji</label><input id="ac-emoji" placeholder="🏦" maxlength="2"/></div>
+          </div>
+          <div class="frow">
+            <div class="fg"><label>Tipo</label><select id="ac-tipo">
+              <option value="carteira">Carteira</option><option value="corrente">Corrente</option>
+              <option value="poupanca">Poupança</option><option value="digital">Digital</option>
+              <option value="invest">Investimento</option>
+            </select></div>
+            <div class="fg"><label>Saldo R$</label><input type="text" id="ac-saldo" placeholder="0,00" inputmode="decimal"/></div>
+            <div class="fg" style="max-width:56px"><label>Cor</label><input type="color" id="ac-cor" value="#6366f1"/></div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn pr sm" id="btn-add-acc" onclick="addAcc()">Salvar</button>
+            <button class="btn sm" onclick="cfgAddToggle('acc')">Cancelar</button>
+          </div>
+        </div>
+        <div id="acc-list"></div>
+      </div>
+
+      <!-- CARTÕES -->
+      <div id="cfg-pane-cartoes" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:11px;color:var(--txt3)">Todo cartão precisa estar vinculado a uma conta</span>
+          <button class="btn pr xs" onclick="cfgAddToggle('cart')">+ Novo</button>
+        </div>
+        <div id="cfg-add-cart" class="cfg-add-form" style="display:none">
+          <h4>➕ Novo Cartão</h4>
+          <div class="frow">
+            <div class="fg" style="flex:2"><label>Nome</label><input id="cc-nome" placeholder="Ex: Nubank Roxo"/></div>
+            <div class="fg" style="max-width:56px"><label>Cor</label><input type="color" id="cc-cor" value="#6366f1"/></div>
+          </div>
+          <div class="frow">
+            <div class="fg"><label>Bandeira</label><select id="cc-band">
+              <option>Visa</option><option>Mastercard</option><option>Elo</option>
+              <option>Amex</option><option>Hipercard</option><option>Outro</option>
+            </select></div>
+            <div class="fg"><label>Conta</label><select id="cc-acc"></select></div>
+          </div>
+          <div class="frow">
+            <div class="fg"><label>Limite R$</label><input id="cc-lim" type="number" placeholder="0" step="0.01"/></div>
+            <div class="fg" style="max-width:80px"><label>Fecha dia</label><input id="cc-fec" type="number" min="1" max="31" placeholder="10"/></div>
+            <div class="fg" style="max-width:80px"><label>Vence dia</label><input id="cc-vec" type="number" min="1" max="31" placeholder="17"/></div>
+          </div>
+          <input type="hidden" id="cc-tipo" data-editId=""/>
+          <div style="display:flex;gap:6px">
+            <button class="btn pr sm" id="cc-save-btn" onclick="addCart()">Salvar</button>
+            <button class="btn sm" onclick="cfgAddToggle('cart')">Cancelar</button>
+          </div>
+        </div>
+        <div id="cart-list"></div>
+      </div>
+
+      <!-- CATEGORIAS -->
+      <div id="cfg-pane-cats" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:11px;color:var(--txt3)">Agrupa seus gastos por tipo</span>
+          <button class="btn pr xs" onclick="cfgAddToggle('cat')">+ Nova</button>
+        </div>
+        <div id="cfg-add-cat" class="cfg-add-form" style="display:none">
+          <h4>➕ Nova Categoria</h4>
+          <div class="frow">
+            <div class="fg" style="flex:2"><label>Nome</label><input id="nc-n" placeholder="Ex: Alimentação"/></div>
+            <div class="fg" style="max-width:56px"><label>Emoji</label><input id="nc-e" placeholder="🍽" maxlength="2"/></div>
+            <div class="fg" style="max-width:56px"><label>Cor</label><input type="color" id="nc-c" value="#6366f1"/></div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn pr sm" id="btn-add-cat" onclick="addCat()">Salvar</button>
+            <button class="btn sm" onclick="cfgAddToggle('cat')">Cancelar</button>
+          </div>
+        </div>
+        <div id="cat-list"></div>
+      </div>
+
+      <!-- SUBCATEGORIAS -->
+      <div id="cfg-pane-subs" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:11px;color:var(--txt3)">Detalha uma categoria — ex: Alimentação → Restaurante</span>
+          <button class="btn pr xs" onclick="cfgAddToggle('sub')">+ Nova</button>
+        </div>
+        <div id="cfg-add-sub" class="cfg-add-form" style="display:none">
+          <h4>➕ Nova Subcategoria</h4>
+          <div class="frow">
+            <div class="fg"><label>Categoria pai</label><select id="ns-p"></select></div>
+            <div class="fg"><label>Nome</label><input id="ns-n" placeholder="Ex: Restaurante"/></div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn pr sm" id="btn-add-sub" onclick="addSub()">Salvar</button>
+            <button class="btn sm" onclick="cfgAddToggle('sub')">Cancelar</button>
+          </div>
+        </div>
+        <div id="sub-list"></div>
+      </div>
+
+      <!-- PAGAMENTOS -->
+      <div id="cfg-pane-pags" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:11px;color:var(--txt3)">Formas de pagamento personalizadas</span>
+          <button class="btn pr xs" onclick="cfgAddToggle('pag')">+ Novo</button>
+        </div>
+        <div id="cfg-add-pag" class="cfg-add-form" style="display:none">
+          <h4>➕ Novo Pagamento</h4>
+          <div class="frow">
+            <div class="fg"><label>Nome</label><input id="np-n" placeholder="Ex: Vale Alimentação"/></div>
+            <div class="fg"><label>Tipo base</label><select id="np-t">
+              <option value="credit">Crédito</option><option value="debit">Débito</option>
+              <option value="pix">Pix</option><option value="dinheiro">Dinheiro</option>
+              <option value="outro">Outro</option>
+            </select></div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn pr sm" id="btn-add-pag" onclick="addPag()">Salvar</button>
+            <button class="btn sm" onclick="cfgAddToggle('pag')">Cancelar</button>
+          </div>
+        </div>
+        <div id="pag-list"></div>
+      </div>
+    </div>
+
+    <!-- ── OPÇÕES GERAIS ────────────────────────────────── -->
+    <div id="cfg-opts-section"></div>
+  </div>
+</div>
+<div class="page" id="p-relatorio">
+  <div class="card">
+    <div class="ch"><span class="ct">Relatório configurável</span></div>
+    <div style="display:none"><select id="rel-mes" class="mes-sel"><option value=""></option></select><select id="rel-cat"><option value=""></option></select><select id="rel-acc"><option value=""></option></select><select id="rel-pag"><option value=""></option></select></div>
+    <!-- Seções para incluir -->
+    <div style="font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Incluir no relatório</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+      <label class="rel-check"><input type="checkbox" id="rel-inc-resumo" checked onchange="buildRelatorio()"/> Resumo</label>
+      <label class="rel-check"><input type="checkbox" id="rel-inc-cats" checked onchange="buildRelatorio()"/> Por categoria</label>
+      <label class="rel-check"><input type="checkbox" id="rel-inc-lista" checked onchange="buildRelatorio()"/> Lista de transações</label>
+      <label class="rel-check"><input type="checkbox" id="rel-inc-parc" onchange="buildRelatorio()"/> Parcelamentos</label>
+    </div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap">
+      <button class="btn pr sm" onclick="shareRelatorio()">📤 Compartilhar</button>
+      <button class="btn sm" onclick="dlRelatorioCSV()">⬇️ CSV</button>
+      <button class="btn sm" onclick="buildRelatorio()">↺ Atualizar</button>
+    </div>
+  </div>
+  <!-- Preview do relatório -->
+  <div id="rel-preview"></div>
+</div>
+
+
+
+<!-- GRADE DE DADOS -->
+<div class="page" id="p-datagrid">
+  <!-- Filtros compactos -->
+  <div class="card" style="padding:10px 12px;margin-bottom:6px">
+    <div style="display:none"><select id="dg-mes" class="mes-sel"></select><select id="dg-acc-flt"><option value=""></option></select><select id="dg-cat"><option value=""></option></select><input id="dg-q"/></div>
+    <!-- Seletor de colunas -->
+    <div style="margin-bottom:6px">
+      <div style="font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Colunas visíveis</div>
+      <div id="dg-col-chips" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span id="dg-lbl" style="font-size:12px;color:var(--txt3)">—</span>
+      <span id="dg-tot" style="font-size:13px;font-weight:800;color:var(--rose)">—</span>
+    </div>
+  </div>
+  <div style="overflow:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r);border:0.5px solid var(--bdr)">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:400px">
+      <thead><tr id="dg-head" style="position:sticky;top:0;z-index:2;background:var(--bg2)"></tr></thead>
+      <tbody id="dg-body"></tbody>
+    </table>
+  </div>
+  <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
+    <button class="btn sm" onclick="dlCSVDG()">⬇ CSV</button>
+    <button class="btn sm dn" onclick="delAllDGFiltered()">✕ Apagar filtrados</button>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="mov" id="mov"><div class="modal"><div class="mhnd"></div><h3 id="m-title">—</h3><p id="m-msg" style="font-size:13px;color:var(--txt2);line-height:1.7;white-space:pre-line"></p><div id="m-extra"></div><div class="mbtns" id="m-btns"><button class="btn sm" onclick="closeModal()">Cancelar</button><button class="btn dn sm" id="m-ok">Confirmar</button></div></div></div>
+
+<div class="toast" id="toast"></div>
+<script src="config.js"></script>
+  <script src="app.js"></script>
+  <script src="cfg-migrate.js"></script>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bot-nav" id="bot-nav">
+  <button class="bnav-btn act" onclick="navBot('resumo',this)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Resumo<div class="bnav-dot"></div></button>
+  <button class="bnav-btn" onclick="navBot('transacoes',this)"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h12M3 18h9"/></svg>Transações<div class="bnav-dot"></div></button>
+  <button class="bnav-btn" onclick="nav('lancar',null)" style="position:relative"><div style="position:absolute;top:-8px;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--vio));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(99,102,241,.5)"><svg viewBox="0 0 24 24" width="22" height="22" stroke="#fff" fill="none" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg></div><span style="margin-top:26px">Lançar</span></button>
+  <button class="bnav-btn" onclick="navBot('calendario',this)"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Calendário<div class="bnav-dot"></div></button>
+  <button class="bnav-btn" onclick="navBot('config',this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>Config<div class="bnav-dot"></div></button>
+</nav>
+
+</div><!-- /shell -->
+
+<div id="app-footer" style="text-align:center;font-size:10px;color:var(--txt3);padding:8px 0">Finanças Pessoais v1.8</div></body>
+</html>

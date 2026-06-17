@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Finanças V2"/>
 <link rel="manifest" href="manifest.json"/>
 <link rel="apple-touch-icon" href="icons/icon-192.png"/>
-<title>Finanças Pessoais v1.8</title>
+<title>Finanças Pessoais v1.9</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap');
 
@@ -132,13 +132,13 @@ body{
   .sb.col{width:0;max-width:0}
   .shell{width:100vw;max-width:100vw;overflow:hidden}
   .main{flex:1;min-width:0;width:100%;max-width:100vw}
-  .cnt{width:100%;box-sizing:border-box;max-width:100vw;overflow-x:hidden}
+  .cnt{width:100%;box-sizing:border-box;max-width:100vw;overflow-x:hidden;overflow-y:auto !important;-webkit-overflow-scrolling:touch}
 }
 
 .ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:198;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);-webkit-tap-highlight-color:transparent;transition:opacity .25s}
 .ov.on{display:block}
 .main{flex:1;min-width:0;width:0;display:flex;flex-direction:column;min-height:0;overflow:hidden}
-.cnt{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:16px 16px calc(20px + var(--sb));max-width:100vw}
+.cnt{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding:16px 16px calc(20px + var(--sb));max-width:100vw}
 .global-filter-inline{display:none;border-bottom:1px solid var(--bdr);background:var(--bg);box-shadow:0 12px 32px rgba(0,0,0,.2);max-height:42vh;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-shrink:0}
 @media(max-width:640px){.global-filter-inline{max-height:48vh}}
 
@@ -577,6 +577,15 @@ textarea{resize:none}
 
 /* ── ADVANCED TABLE ──────────────────────────────────────── */
 .adv-table-wrap{overflow:auto;-webkit-overflow-scrolling:touch;max-height:420px;border-radius:14px;border:1px solid var(--bdr)}
+
+/* ── IMPORT ZONE — área de seleção/drop de arquivo ──────────── */
+.imp-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:28px 16px;border:1.5px dashed var(--bdr2);border-radius:16px;background:var(--bg3);cursor:pointer;transition:border-color .2s,background .2s}
+.imp-zone:hover{border-color:var(--accent);background:var(--bg4)}
+.imp-zone.drag{border-color:var(--accent);background:rgba(99,102,241,.08)}
+.imp-zone-icon{font-size:32px;line-height:1}
+.imp-zone-text{font-size:13px;font-weight:700;color:var(--txt)}
+.imp-zone-sub{font-size:11px;color:var(--txt3)}
+.imp-result{font-size:12px;line-height:1.7;padding:11px 13px;background:var(--bg3);border-radius:12px;border:0.5px solid var(--bdr)}
 .adv-table{width:100%;border-collapse:collapse;font-size:12px;min-width:500px}
 .adv-table th{padding:10px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;background:var(--bg3);border-bottom:1px solid var(--bdr);white-space:nowrap;cursor:pointer;user-select:none;-webkit-user-select:none;transition:background .15s}
 .adv-table th:hover{background:var(--bg4)}
@@ -1383,7 +1392,7 @@ textarea{resize:none}
       <div class="trow"><div class="ti"><div class="t1">Importar backup</div></div><button class="btn sm" onclick="document.getElementById('imp-f').click()">Importar</button><input type="file" id="imp-f" accept=".json" style="display:none" onchange="impJSON(this)"/></div>
       <div class="trow"><div class="ti"><div class="t1" style="color:var(--rose)">Apagar todos os dados</div><div class="t2">Irreversível</div></div><button class="btn dn sm" onclick="clearAll()">Apagar</button></div>
     </div>
-    <div class="card"><div class="trow"><div class="t1">Versão</div><span style="font-size:12px;color:var(--txt3)">v1.8</span></div></div>
+    <div class="card"><div class="trow"><div class="t1">Versão</div><span style="font-size:12px;color:var(--txt3)">v1.9</span></div></div>
     <button class="btn dn sm" onclick="lockApp()" style="width:100%;margin-top:4px;justify-content:center">🔒 Bloquear app</button>
   </div>
 </div>
@@ -1622,5 +1631,5 @@ textarea{resize:none}
 
 </div><!-- /shell -->
 
-<div id="app-footer" style="text-align:center;font-size:10px;color:var(--txt3);padding:8px 0">Finanças Pessoais v1.8</div></body>
+<div id="app-footer" style="text-align:center;font-size:10px;color:var(--txt3);padding:8px 0">Finanças Pessoais v1.9</div></body>
 </html>

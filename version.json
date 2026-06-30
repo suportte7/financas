@@ -1,0 +1,179 @@
+{
+  "version": "1.8",
+  "date": "2026-06-30",
+  "changelog": [
+    {
+      "version": "1.8",
+      "date": "2026-06-30",
+      "files": [
+        "app.js",
+        "cfg-migrate.js"
+      ],
+      "changes": [
+        "app.js CORRECAO RAIZ: addDesp gerava datas de parcelas com 'new Date(data)' sem hora — em fuso negativo (Brasil, UTC-3) isso faz getMonth()/getDate() locais ficarem um dia ANTES do real. Provado com teste: parcela de despesa datada 01/07 gerava parcela 2 em 31/07 em vez de 01/08, empurrando a parcela pro mês errado e distorcendo o total mensal. Corrigido ancorando em 'T12:00:00' (meio-dia), mesmo padrão já usado nas recorrências",
+        "app.js CORRECAO RAIZ: removido bloco morto de filtro global legado (per/openGlobalFilter/applyGlobalFilter/gfltFiltered) que inicializava window.GFLT ANTES do cfg-migrate.js, com nome de campo diferente ('per' em vez de 'modo'). Por causa do '||' na inicialização, a versão correta do cfg-migrate.js nunca chegava a aplicar — o app sempre rodava pelo caminho de cálculo 'customizado' em vez do caminho simples padrão, mesmo sem nenhum filtro ativo, desde a primeira renderização",
+        "app.js: adicionado _dedupDesps() chamado em todo saveAll() — remove despesas duplicadas por ID antes de persistir, proteção defensiva contra duplicação por sync/import que também poderia inflar totais",
+        "app.js: mantida _getActivePage() (usada por renderAll e cfg-migrate.js) ao limpar o bloco morto"
+      ]
+    },
+    {
+      "version": "1.7",
+      "date": "2026-06-29",
+      "files": [
+        "app.js",
+        "cfg-migrate.js",
+        "index.html"
+      ],
+      "changes": [
+        "index.html CORRECAO RAIZ scroll: na v1.7/1.8 foi inserido um </div> extra na linha 914 ao adicionar id='r-hl', fechando .hero prematuramente. Isso deslocou todos os elementos seguintes fora do .cnt (container de scroll), quebrando o scroll em TODAS as páginas do app em PC e celular",
+        "index.html: estrutura HTML restaurada a partir da v1.6 — HTML balanceado com 434 abre/fecha divs. id='r-hl' adicionado corretamente sem nenhum div extra",
+        "index.html: aba Drive removida de Config→Dados (agora 3 abas: Sync/Importar/CSV)",
+        "index.html: card Backup Drive movido para dentro da aba Sync",
+        "app.js: renderAll() re-renderiza a página visível além do Resumo — ações como salvar/editar/sync atualizam a tela aberta imediatamente sem precisar trocar de página",
+        "app.js: nav transacoes não reseta o período quando GFLT já tem modo diferente de 'mes'",
+        "cfg-migrate.js: _updateRHeroLabel() — label 'Total gasto no mês' agora dinâmico conforme período ativo (Todos os dados / Este mês / 7 dias / 30 dias / 90 dias / Este ano / Período selecionado)"
+      ]
+    },
+    {
+      "version": "1.6",
+      "date": "2026-06-16",
+      "files": [
+        "app.js",
+        "index.html"
+      ],
+      "changes": [
+        "app.js CORRECAO RAIZ: checkAutoBackup já existia e era chamada no boot, mas o threshold só tratava 'daily' vs qualquer-outra-coisa (sem distinguir weekly de monthly) — agora tem THRESHOLDS{daily,weekly,monthly} corretos com ~23h/6.5dias/28dias",
+        "app.js backupToDrive: aceita parâmetro silent — quando chamado automaticamente pelo checkAutoBackup, não navega para a tela Drive nem mostra toast de erro se o usuário não estiver olhando, evitando navegação inesperada",
+        "app.js checkAutoBackup: adicionados logs de diagnóstico no console mostrando frequência, último backup e threshold calculado — facilita verificar por que disparou ou não",
+        "app.js saveDriveCfg: default trocado de 'weekly' para 'never' — não deve haver suposição de frequência sem o usuário escolher explicitamente",
+        "app.js updateDriveStatus: título agora mostra a frequência configurada (Manual/Diário/Semanal/Mensal) e texto distingue 'nunca configurado' de 'configurado mas sem backup ainda'",
+        "index.html: adicionada opção Mensal nos rádios de frequência de backup Drive — antes só existia Manual/Diário/Semanal",
+        "index.html: nota explicativa informando que o backup automático roda sozinho ao abrir o app, sem precisar de ação manual nem URL adicional — usa a mesma URL do Apps Script já configurada em Sync"
+      ]
+    },
+    {
+      "version": "1.5",
+      "date": "2026-06-16",
+      "files": [
+        "app.js",
+        "apps-script.gs"
+      ],
+      "changes": [
+        "app.js: _parseData(raw) — trata qualquer formato de data que o Sheets retorne: ISO com T, Date serializado, DD/MM/YYYY, YYYY-MM-DD. Garante sempre YYYY-MM-DD internamente",
+        "app.js: _parseValor(raw) — converte qualquer formato de valor para número: '1.234,56', '1,234.56', 'R$ 99,90', número puro",
+        "app.js: _sanitizarDesps() — sanitiza datas e valores ruins nas despesas já salvas no localStorage. Chamada no boot",
+        "app.js: fmtD corrigida — ignora timestamp ISO (T03:00:00.000Z) e extrai só YYYY-MM-DD para exibição",
+        "app.js: loadDespsFromSheet usa _parseData e _parseValor — nunca mais importa data ISO ou valor string da planilha",
+        "apps-script.gs: _numValor(), _parseDataGS(), _fmtDataGS() — funções auxiliares de normalização",
+        "apps-script.gs: getRowsData normaliza todas as datas para YYYY-MM-DD e valores para número antes de retornar",
+        "apps-script.gs: insertRows grava data como string YYYY-MM-DD e valor como número com formato #,##0.00",
+        "apps-script.gs: fixValoresNaPlanilha() — corrige todos os valores e datas ruins já existentes na planilha. Chamar uma vez via GET ?action=fixValores"
+      ]
+    },
+    {
+      "version": "1.4",
+      "date": "2026-06-15",
+      "files": [
+        "index.html"
+      ],
+      "changes": [
+        "index.html: CORREÇÃO RAIZ — adicionado CSS faltante para .parc-card, .parc-hdr, .parc-cat-icon, .parc-hdr-info/name/sub/right/total/remain, .parc-chevron-icon e .parc-detail. Essas classes são geradas pelo renderParcs() redesenhado mas nunca tiveram estilo definido",
+        "index.html: .parc-chevron-icon (SVG sem width/height) renderizava no tamanho padrão do navegador (300x150px) — essa era a 'figura grande' tomando a tela em Parcelamentos. Agora fixado em 16x16px",
+        "index.html: .parc-hdr agora tem display:flex — sem isso os elementos (ícone, info, total, svg, botão) empilhavam como blocos de largura total",
+        "index.html: .parc-detail agora colapsa por padrão (display:none) e expande via .parc-card.expanded — antes ficava sempre visível para todos os grupos",
+        "index.html: adicionado @media(max-width:380px) para cards de parcelamento em telas pequenas"
+      ]
+    },
+    {
+      "version": "1.3",
+      "date": "2026-06-13",
+      "files": [
+        "app.js",
+        "index.html"
+      ],
+      "changes": [
+        "app.js showReceipt: imagem do comprovante limitada a max-height:55vh e max-width:100% com object-fit:contain — não toma mais a tela toda",
+        "app.js renderCal: células do calendário recebem data-date para acesso correto. Dots de parcelas futuras com opacidade reduzida e borda para distinguir. Total do dia embutido na célula",
+        "app.js renderCalDetail: transações futuras (parcelas) aparecem no detalhe do dia separadas com label 'Parcelas futuras'",
+        "app.js renderCalPlus: removida duplicação do valor por dia — já embutido no renderCal. Filtros de acc/cat atualizam corretamente",
+        "index.html: CSS calendário otimizado para mobile — células menores, @media 380px com fontes reduzidas, cal-day-val definido centralmente"
+      ]
+    },
+    {
+      "version": "1.2",
+      "date": "2026-06-11",
+      "files": [
+        "app.js"
+      ],
+      "changes": [
+        "app.js autoLoadOnOpen: dispositivo novo carrega AUTOMATICAMENTE sem modal bloqueante — exibe banner de progresso não-bloqueante. Modal era o motivo principal de não carregar no celular",
+        "app.js autoLoadOnOpen: após load chama populateForm() e populateFlt() explicitamente para garantir filtros preenchidos",
+        "app.js loadAllFromCloud: NÃO aborta mais quando AppData está vazio — continua para loadDespsFromSheet que reconstrói tudo das colunas da planilha. Era o segundo motivo de tela vazia",
+        "app.js loadAllFromCloud: sempre chama populateForm() e populateFlt() após load para garantir selects preenchidos em qualquer dispositivo",
+        "app.js loadDespsFromSheet: após importar, chama populateForm/populateFlt/populateRSels/populateAssinSelects/_populateCartAccSel para atualizar toda a UI"
+      ]
+    },
+    {
+      "version": "1.1",
+      "date": "2026-06-11",
+      "files": [
+        "app.js",
+        "index.html"
+      ],
+      "changes": [
+        "app.js onCart: cartão é completamente independente — não força conta, não força nada. Apenas sugere o tipo de pagamento (crédito/débito) conforme tipoUso do cartão",
+        "app.js onPag: removida lógica que escondia/mostrava campo cartão baseado no pagamento. Cartão sempre visível e opcional",
+        "app.js addDesp: removida obrigatoriedade de cartId e accId. Campos opcionais — mesma estrutura da planilha onde Cartão e Conta são colunas independentes",
+        "index.html: formulário de lançamento reordenado — Pagamento primeiro (obrigatório *), depois Cartão e Conta lado a lado (ambos opcionais)"
+      ]
+    },
+    {
+      "version": "1.0",
+      "date": "2026-06-10",
+      "files": [
+        "app.js",
+        "cfg-migrate.js",
+        "index.html",
+        "apps-script.gs",
+        "sw.js",
+        "manifest.json",
+        "config.js"
+      ],
+      "changes": [
+        "Lançamento oficial v1.0 — app consolidado e estável.",
+        "app.js _vivos(type): função central que controla o que aparece em QUALQUER select, chip ou lista. Com dados importados: só itens com despesas vinculadas. App vazio: demos fictícios para orientar.",
+        "app.js _vivosSubs(catIds): variante de _vivos para subcategorias filtradas por categoria pai.",
+        "app.js _DEMO: conjunto de dados fictícios exibidos apenas quando desps.length === 0.",
+        "app.js loadDespsFromSheet: reconstrói cats/accs/carts/pags/subs a partir dos valores únicos das colunas da planilha. Nunca usa defaults hardcoded.",
+        "app.js loadAllFromCloud: zera arrays antes de aplicar dados da nuvem (cats=[], carts=[], accs=[]). Evita mescla com legados.",
+        "app.js _limparDefaultsLegados(): remove do localStorage qualquer item default (ali/trp/nu/def...) sem despesas vinculadas. Chamada no boot, no sync e no load. Também limpa cfg.metaAccs de IDs inválidos.",
+        "app.js renderMetaAccs: filtra estritamente por _vivos('acc') sem demos. Limpa cfg.metaAccs de IDs inexistentes e persiste imediatamente.",
+        "app.js renderCfgContas/Cartoes/Cats/Pags: filtram por despesas vinculadas antes de renderizar. Só aparece o que existe na planilha.",
+        "app.js addAcc/addCart/addCat/addSub/addPag: itens criados manualmente recebem _manual:true para aparecerem mesmo sem despesas.",
+        "app.js populateForm, populateFlt, populateFltSubs, populateRSels, populateCartCCSel, populateDelSels, populateCatSels, populateParcCatSel, onCat, renderAccSummary: todos passam por _vivos().",
+        "cfg-migrate.js: operações completas Contas & Categorias — transferir, mesclar, converter entre tipos (acc↔cart↔cat↔sub↔pag) com migração em cascata das despesas.",
+        "cfg-migrate.js: filtro lateral drawer (hamburguer) com períodos e chips. Todos os chips usam _vivos().",
+        "cfg-migrate.js: cfgTypeTab, cfgAddToggle, cfgSearch — navegação por abas e formulários inline no menu Config.",
+        "Regra permanente: NUNCA iterar diretamente sobre cats/accs/carts/pags/subs. Sempre usar _vivos(type).",
+        "Regra permanente: build.sh é o único jeito de gerar ZIP. Sempre executa bump_version.py com --changes obrigatório."
+      ]
+    }
+  ],
+  "_instrucoes": {
+    "obrigatorio": "TODA alteração de código DEVE ser registrada aqui antes do ZIP. Sem exceção.",
+    "formato": "Cada entry tem: version, date (YYYY-MM-DD), files (array dos arquivos tocados), changes (array de strings).",
+    "prefixos": {
+      "CORRECAO RAIZ": "Bug estrutural que afetava múltiplas versões",
+      "CORRECAO": "Bug pontual corrigido",
+      "NOVO": "Feature ou função adicionada",
+      "REMOVIDO": "Código ou feature removida com justificativa"
+    },
+    "regras": [
+      "NUNCA defaults hardcoded em cats/carts/accs. Arrays iniciam vazios.",
+      "NUNCA iterar diretamente sobre cats/accs/carts/pags/subs em selects ou chips. Sempre _vivos(type).",
+      "localStorage é cache, não fonte de verdade. Ao carregar da nuvem, SEMPRE zerar arrays antes.",
+      "build.sh é o ÚNICO ponto de geração de ZIP. Nunca usar zip diretamente.",
+      "bump_version.py --changes é OBRIGATÓRIO antes de qualquer ZIP."
+    ]
+  }
+}

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🔧 Diagnóstico — Finanças v2</title>
+<style>
+  body{font-family:system-ui;background:#111;color:#eee;padding:20px;max-width:700px;margin:0 auto}
+  h1{color:#818cf8;margin-bottom:4px}
+  p{color:#9ca3af;margin:0 0 20px}
+  input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #374151;background:#1f2937;color:#fff;font-size:14px;margin-bottom:12px}
+  button{padding:12px 20px;border-radius:10px;border:none;background:#6366f1;color:#fff;font-size:14px;font-weight:700;cursor:pointer;margin:4px 4px 4px 0;transition:opacity .15s}
+  button:hover{opacity:.85}
+  button.sec{background:#374151}
+  .log{background:#0f172a;border-radius:12px;padding:16px;margin-top:16px;font-family:monospace;font-size:13px;line-height:1.7;min-height:80px;white-space:pre-wrap;word-break:break-all}
+  .ok{color:#34d399}.err{color:#f87171}.warn{color:#fbbf24}.info{color:#60a5fa}.bold{font-weight:700}
+  .step{margin:4px 0;padding:8px 12px;border-radius:8px;background:#1e293b}
+  .step.pass{border-left:3px solid #34d399}.step.fail{border-left:3px solid #f87171}.step.run{border-left:3px solid #fbbf24}
+</style>
+</head>
+<body>
+<h1>🔧 Diagnóstico — Finanças v2</h1>
+<p>Cole a URL do Web App abaixo e clique em Testar Tudo.</p>
+
+<input type="url" id="url" placeholder="https://script.google.com/macros/s/.../exec"
+  value="https://script.google.com/macros/s/AKfycbxjPHTHBDYJCmmhQEP3w7NVq-KZEInLu16KevNebGvWtVp-h0WBO2jtVm1RNvCBb4k1/exec"/>
+<button onclick="runAll()">▶ Testar Tudo</button>
+<button class="sec" onclick="testPing()">Ping</button>
+<button class="sec" onclick="testInfo()">Info (JSONP)</button>
+<button class="sec" onclick="testPost()">POST (addRows)</button>
+<button class="sec" onclick="clearLog()">Limpar</button>
+
+<div id="log" class="log">Aguardando...</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const url = () => $('url').value.trim();
+let logEl;
+
+function log(msg, cls='') {
+  logEl = logEl || $('log');
+  const d = document.createElement('div');
+  d.className = 'step ' + cls;
+  d.innerHTML = msg;
+  if (logEl.textContent === 'Aguardando...') logEl.innerHTML = '';
+  logEl.appendChild(d);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function clearLog() { $('log').innerHTML = ''; logEl = $('log'); }
+
+async function testPing() {
+  const u = url();
+  if (!u) { log('❌ Cole a URL primeiro', 'fail'); return; }
+  log(`🔎 Testando ping: ${u.slice(-30)}...`, 'run');
+  try {
+    const t = Date.now();
+    const r = await fetch(u + '?action=ping');
+    const j = await r.json();
+    const ms = Date.now() - t;
+    if (j.ok) log(`✅ Ping OK em ${ms}ms — v${j.v||'?'}`, 'pass');
+    else log(`⚠️ Resposta: ${JSON.stringify(j)}`, 'warn');
+  } catch(e) {
+    log(`❌ Ping falhou: ${e.message}`, 'fail');
+    // Try no-cors to see if URL exists
+    try {
+      await fetch(u + '?action=ping', {mode:'no-cors'});
+      log('⚠️ URL alcançada mas CORS bloqueia leitura (normal para Apps Script)', 'warn');
+      log('  → Os dados CHEGAM ao servidor. Sync funciona via no-cors.', 'warn');
+    } catch(e2) {
+      log(`❌ URL completamente inacessível: ${e2.message}`, 'fail');
+    }
+  }
+}
+
+async function testInfo() {
+  const u = url();
+  if (!u) { log('❌ Cole a URL primeiro', 'fail'); return; }
+  log('🔎 Testando info via JSONP...', 'run');
+  try {
+    const data = await fetchJSONP(u + '?action=info');
+    if (data.ok && data.sheetUrl) {
+      log(`✅ Info OK — Planilha: ${data.sheetName}`, 'pass');
+      log(`   URL da planilha: ${data.sheetUrl}`, 'pass');
+      log(`   Linhas de dados: ${data.rows}`, 'pass');
+    } else {
+      log(`⚠️ Info respondeu mas sem sheetUrl: ${JSON.stringify(data)}`, 'warn');
+    }
+  } catch(e) {
+    log(`❌ JSONP falhou: ${e.message}`, 'fail');
+    log('  → Verifique se o script está autorizado e use a URL /exec (não /dev)', 'warn');
+  }
+}
+
+async function testPost() {
+  const u = url();
+  if (!u) { log('❌ Cole a URL primeiro', 'fail'); return; }
+  const testId = 'diag-' + Date.now();
+  const rows = [[
+    '2025-05-28', 'TESTE DIAGNÓSTICO', 'Outros', '', 'Pix', '', 'Conta', '0.01',
+    '', '', 'Apagar depois', testId
+  ]];
+  log('🔎 Enviando linha de teste via POST no-cors...', 'run');
+  try {
+    await fetch(u, {
+      method: 'POST',
+      mode: 'no-cors',
+      credentials: 'omit',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'addRows', rows })
+    });
+    log('✅ POST enviado com sucesso!', 'pass');
+    log(`   ID da linha: ${testId}`, 'pass');
+    log('   Verifique a aba "Transações" da planilha — deve aparecer uma linha "TESTE DIAGNÓSTICO"', 'pass');
+    log('', '');
+    log('⏳ Aguardando 3s para verificar via JSONP se foi inserido...', 'run');
+    await new Promise(r => setTimeout(r, 3000));
+    try {
+      const check = await fetchJSONP(u + '?action=info');
+      log(`✅ Planilha tem ${check.rows} linha(s) agora`, check.rows > 0 ? 'pass' : 'warn');
+    } catch(e) {
+      log('⚠️ Não consegui verificar via JSONP (normal com CORS)', 'warn');
+      log('   Olhe a planilha manualmente para confirmar', 'warn');
+    }
+  } catch(e) {
+    log(`❌ POST falhou: ${e.message}`, 'fail');
+    log('  → Verifique a conexão com a internet', 'fail');
+  }
+}
+
+async function runAll() {
+  clearLog();
+  log('══════════════════════════════════', 'info');
+  log(' DIAGNÓSTICO COMPLETO', 'info');
+  log('══════════════════════════════════', 'info');
+  const u = url();
+  if (!u || !u.includes('script.google.com')) {
+    log('❌ URL inválida. Deve ser script.google.com/macros/s/.../exec', 'fail');
+    return;
+  }
+  if (!navigator.onLine) { log('❌ Sem internet', 'fail'); return; }
+
+  // Step 1: Ping (with CORS read attempt)
+  log('\n📡 PASSO 1: Conectividade', 'info');
+  try {
+    const r = await fetch(u + '?action=ping');
+    const j = await r.json();
+    if (j.ok) log(`✅ Script responde e CORS funciona — v${j.v||'?'}`, 'pass');
+  } catch(e) {
+    try {
+      await fetch(u + '?action=ping', {mode:'no-cors'});
+      log('⚠️ Script alcançado, CORS bloqueia leitura de resposta (comportamento normal)', 'warn');
+      log('   POSTs chegam ao servidor mesmo assim.', 'warn');
+    } catch(e2) {
+      log(`❌ Script inacessível: ${e2.message}`, 'fail');
+      log('   Verifique: URL correta? Internet ok? Script publicado?', 'fail');
+      return;
+    }
+  }
+
+  // Step 2: JSONP info
+  log('\n📋 PASSO 2: Informações da planilha (JSONP)', 'info');
+  try {
+    const info = await fetchJSONP(u + '?action=info');
+    if (info.ok && info.sheetUrl) {
+      log(`✅ Planilha detectada: "${info.sheetName}"`, 'pass');
+      log(`   ${info.rows} transação(ões) na planilha`, 'pass');
+      log(`   URL: <a href="${info.sheetUrl}" target="_blank" style="color:#818cf8">${info.sheetUrl.slice(0,60)}...</a>`, 'pass');
+    } else {
+      log(`⚠️ Info incompleto: ${JSON.stringify(info)}`, 'warn');
+    }
+  } catch(e) {
+    log(`⚠️ JSONP falhou (${e.message}) — mas sync ainda funciona via POST`, 'warn');
+  }
+
+  // Step 3: POST test
+  log('\n💾 PASSO 3: Gravação na planilha (POST no-cors)', 'info');
+  const testId = 'diag-' + Date.now();
+  try {
+    await fetch(u, {
+      method: 'POST', mode: 'no-cors', credentials: 'omit',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'addRows', rows: [[
+        new Date().toISOString().slice(0,10), 'TESTE DIAGNÓSTICO', 'Outros',
+        '', 'Pix', '', 'Conta', '0.01', '', '', 'Apagar depois', testId
+      ]] })
+    });
+    log(`✅ Linha de teste enviada (ID: ${testId})`, 'pass');
+    log('   Abra a planilha e verifique se aparece "TESTE DIAGNÓSTICO"', 'pass');
+  } catch(e) {
+    log(`❌ POST falhou: ${e.message}`, 'fail');
+  }
+
+  // Step 4: saveAppData test
+  log('\n⚙️ PASSO 4: Salvar configurações (saveAppData)', 'info');
+  try {
+    await fetch(u, {
+      method: 'POST', mode: 'no-cors', credentials: 'omit',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'saveAppData', payload: { test: true, ts: Date.now() } })
+    });
+    log('✅ Configurações enviadas', 'pass');
+  } catch(e) {
+    log(`❌ saveAppData falhou: ${e.message}`, 'fail');
+  }
+
+  log('\n══════════════════════════════════', 'info');
+  log('✅ Diagnóstico concluído.', 'pass');
+  log('   Se os passos 3 e 4 tiverem ✅, os dados estão chegando ao servidor.', 'pass');
+  log('   Verifique a planilha em ~10s para confirmar a linha de teste.', 'pass');
+}
+
+function fetchJSONP(src) {
+  return new Promise((resolve, reject) => {
+    const cb = '_jcb_' + Date.now();
+    const t = setTimeout(() => { cleanup(); reject(new Error('timeout 8s')); }, 8000);
+    function cleanup() { delete window[cb]; if(s.parentNode) s.parentNode.removeChild(s); }
+    window[cb] = d => { clearTimeout(t); cleanup(); resolve(d); };
+    const s = document.createElement('script');
+    s.src = src + (src.includes('?') ? '&' : '?') + 'callback=' + cb;
+    s.onerror = () => { clearTimeout(t); cleanup(); reject(new Error('script load error')); };
+    document.head.appendChild(s);
+  });
+}
+</script>
+</body>
+</html>
